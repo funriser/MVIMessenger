@@ -11,6 +11,7 @@ import com.funrisestudio.buzzmessenger.Notifier.Companion.CHANNEL_ID
 import com.funrisestudio.buzzmessenger.Notifier.Companion.CHANNEL_NAME
 import com.funrisestudio.buzzmessenger.Notifier.Companion.ID
 import com.funrisestudio.buzzmessenger.ui.colorPrimary
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.*
 import javax.inject.Inject
 
@@ -27,7 +28,7 @@ interface Notifier {
 }
 
 class NotifierImpl @Inject constructor(
-    private val context: Application
+    @ApplicationContext private val context: Context
 ): Notifier {
 
     private val notificationManager by lazy {

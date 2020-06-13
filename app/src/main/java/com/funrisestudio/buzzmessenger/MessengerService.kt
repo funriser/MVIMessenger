@@ -3,19 +3,18 @@ package com.funrisestudio.buzzmessenger
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import com.funrisestudio.buzzmessenger.data.MessengerServiceController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 import kotlin.random.Random
-import kotlin.random.nextInt
 
 @AndroidEntryPoint
 class MessengerService : Service() {
 
     private val scope = MainScope()
 
-    @Inject lateinit var notifier: Notifier
+    @Inject lateinit var controller: MessengerServiceController
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         simulateMessage()
@@ -33,8 +32,8 @@ class MessengerService : Service() {
         }
     }
 
-    private fun onMessageReceived(sender: Sender, message: String) {
-        notifier.sendMessageNotification(sender, message)
+    private suspend fun onMessageReceived(sender: Sender, message: String) {
+        controller.onNewMessage(sender, message)
     }
 
     override fun onBind(intent: Intent): IBinder? {

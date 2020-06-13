@@ -1,5 +1,7 @@
-package com.funrisestudio.buzzmessenger
+package com.funrisestudio.buzzmessenger.core.di
 
+import com.funrisestudio.buzzmessenger.Notifier
+import com.funrisestudio.buzzmessenger.NotifierImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
