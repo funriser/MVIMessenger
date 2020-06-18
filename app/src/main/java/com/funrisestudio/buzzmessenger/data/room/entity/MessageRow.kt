@@ -3,6 +3,7 @@ package com.funrisestudio.buzzmessenger.data.room.entity
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import java.util.*
 
 @Entity(
     tableName = "messages",
@@ -17,5 +18,6 @@ data class MessageRow(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     val senderId: Int,
-    val message: String
+    val message: String,
+    val timestamp: Date
 )

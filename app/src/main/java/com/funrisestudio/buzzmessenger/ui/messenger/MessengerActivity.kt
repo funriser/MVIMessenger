@@ -1,4 +1,4 @@
-package com.funrisestudio.buzzmessenger
+package com.funrisestudio.buzzmessenger.ui.messenger
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

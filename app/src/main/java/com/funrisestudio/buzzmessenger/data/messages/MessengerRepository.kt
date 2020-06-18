@@ -1,6 +1,6 @@
-package com.funrisestudio.buzzmessenger.data
+package com.funrisestudio.buzzmessenger.data.messages
 
-import com.funrisestudio.buzzmessenger.Sender
+import com.funrisestudio.buzzmessenger.domain.Sender
 import com.funrisestudio.buzzmessenger.core.Result
 
 interface MessengerRepository {

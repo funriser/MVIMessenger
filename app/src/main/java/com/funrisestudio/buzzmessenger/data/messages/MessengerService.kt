@@ -1,9 +1,12 @@
-package com.funrisestudio.buzzmessenger
+package com.funrisestudio.buzzmessenger.data.messages
 
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import com.funrisestudio.buzzmessenger.data.MessengerServiceController
+import com.funrisestudio.buzzmessenger.data.contacts
+import com.funrisestudio.buzzmessenger.data.messages
+import com.funrisestudio.buzzmessenger.domain.Sender
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -22,8 +25,8 @@ class MessengerService : Service() {
     }
 
     private fun simulateMessage() {
-        val sender = Sender.macFly()
-        val message = "It's time"
+        val sender = contacts.random()
+        val message = messages.random()
         val delayMillis = Random.nextLong(5000, 10000)
         scope.launch {
             delay(delayMillis)

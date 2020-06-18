@@ -10,7 +10,9 @@ import com.funrisestudio.buzzmessenger.Notifier.Companion.CHANNEL_DESCRIPTION
 import com.funrisestudio.buzzmessenger.Notifier.Companion.CHANNEL_ID
 import com.funrisestudio.buzzmessenger.Notifier.Companion.CHANNEL_NAME
 import com.funrisestudio.buzzmessenger.Notifier.Companion.ID
+import com.funrisestudio.buzzmessenger.domain.Sender
 import com.funrisestudio.buzzmessenger.ui.colorPrimary
+import com.funrisestudio.buzzmessenger.ui.messenger.MessengerActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.*
 import javax.inject.Inject

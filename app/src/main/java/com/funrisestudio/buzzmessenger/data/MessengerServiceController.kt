@@ -1,6 +1,6 @@
 package com.funrisestudio.buzzmessenger.data
 
-import com.funrisestudio.buzzmessenger.Sender
+import com.funrisestudio.buzzmessenger.domain.Sender
 
 interface MessengerServiceController {
 

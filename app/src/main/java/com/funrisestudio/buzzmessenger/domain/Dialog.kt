@@ -1,6 +1,8 @@
-package com.funrisestudio.buzzmessenger
+package com.funrisestudio.buzzmessenger.domain
 
-data class DialogPreview(
+import java.util.*
+
+data class Dialog(
     val contact: Sender,
     val lastMessage: MessagePreview,
     val unreadCount: Int
@@ -8,5 +10,5 @@ data class DialogPreview(
 
 data class MessagePreview(
     val text: String,
-    val date: String
+    val date: Date
 )

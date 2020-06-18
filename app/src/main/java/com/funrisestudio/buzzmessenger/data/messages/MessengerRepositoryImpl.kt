@@ -1,8 +1,8 @@
-package com.funrisestudio.buzzmessenger.data
+package com.funrisestudio.buzzmessenger.data.messages
 
-import com.funrisestudio.buzzmessenger.Sender
+import com.funrisestudio.buzzmessenger.domain.Sender
 import com.funrisestudio.buzzmessenger.core.Result
-import com.funrisestudio.buzzmessenger.data.local.MessengerLocalSource
+import com.funrisestudio.buzzmessenger.data.messages.local.MessengerLocalSource
 import javax.inject.Inject
 
 class MessengerRepositoryImpl @Inject constructor(

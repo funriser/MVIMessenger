@@ -1,7 +1,8 @@
-package com.funrisestudio.buzzmessenger
+package com.funrisestudio.buzzmessenger.ui.main
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.Composable
 import androidx.ui.core.Modifier
@@ -14,30 +15,32 @@ import androidx.ui.material.Scaffold
 import androidx.ui.material.TopAppBar
 import androidx.ui.res.vectorResource
 import androidx.ui.tooling.preview.Preview
+import com.funrisestudio.buzzmessenger.data.messages.MessengerService
+import com.funrisestudio.buzzmessenger.R
 import com.funrisestudio.buzzmessenger.ui.AppTheme
-import com.funrisestudio.buzzmessenger.ui.main.DialogListItem
+import com.funrisestudio.buzzmessenger.ui.observe
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var notifier: Notifier
+    private val mainViewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                MainScreen(items = mockedDialogs())
+                MainScreen {
+                    observe(liveData = mainViewModel.dialogs)
+                }
             }
         }
         if (savedInstanceState == null) {
-            //startMessageService()
+            startMessageService()
         }
     }
 
-    fun startMessageService() {
+    private fun startMessageService() {
         Intent(this, MessengerService::class.java).also {
             startService(it)
         }
@@ -46,9 +49,7 @@ class MainActivity : AppCompatActivity() {
 }
 
 @Composable
-fun MainScreen(
-    items: List<DialogPreview>
-) {
+fun MainScreen(dialogsProvider: @Composable() () -> List<DialogViewData>?) {
     Scaffold(
         topAppBar = {
             TopAppBar(
@@ -61,18 +62,18 @@ fun MainScreen(
             )
         }
     ) {
-        MainContent(
-            items = items
-        )
+        MainContent(dialogsProvider)
     }
 }
 
 @Composable
-fun MainContent(items: List<DialogPreview>) {
-    VerticalScroller(modifier = Modifier.fillMaxSize()) {
-        Column {
-            items.forEach {
-                DialogListItem(item = it)
+fun MainContent(dialogsProvider: @Composable() () -> List<DialogViewData>?) {
+    dialogsProvider()?.let { dialogs ->
+        VerticalScroller(modifier = Modifier.fillMaxSize()) {
+            Column {
+                dialogs.forEach {
+                    DialogListItem(item = it)
+                }
             }
         }
     }
@@ -82,33 +83,8 @@ fun MainContent(items: List<DialogPreview>) {
 @Composable
 fun MainScreenPreview() {
     AppTheme {
-        MainScreen(items = mockedDialogs())
+        MainScreen {
+            getFakeDialogViewData()
+        }
     }
 }
-
-fun mockedDialogs() = listOf(
-    DialogPreview(
-        contact = Sender(
-            id = 1,
-            name = "McFly",
-            avatar = R.drawable.avatar_mc_fly
-        ),
-        lastMessage = MessagePreview(
-            text = "It's time",
-            date = "15:02"
-        ),
-        unreadCount = 1
-    ),
-    DialogPreview(
-        contact = Sender(
-            id = 1,
-            name = "Dr Brown",
-            avatar = R.drawable.avatar_mc_fly
-        ),
-        lastMessage = MessagePreview(
-            text = "It's definitely time",
-            date = "15:10"
-        ),
-        unreadCount = 1
-    )
-)

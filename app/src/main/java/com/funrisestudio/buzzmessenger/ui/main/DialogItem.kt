@@ -14,15 +14,12 @@ import androidx.ui.layout.*
 import androidx.ui.res.imageResource
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
-import com.funrisestudio.buzzmessenger.DialogPreview
-import com.funrisestudio.buzzmessenger.MessagePreview
-import com.funrisestudio.buzzmessenger.R
-import com.funrisestudio.buzzmessenger.Sender
 import com.funrisestudio.buzzmessenger.ui.*
 
 @Composable
-fun DialogListItem(item: DialogPreview) {
-    val avatarAsset = imageResource(item.contact.avatar)
+fun DialogListItem(item: DialogViewData) {
+    val dgData = item.dialog
+    val avatarAsset = imageResource(dgData.contact.avatar)
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
@@ -65,21 +62,21 @@ fun DialogListItem(item: DialogPreview) {
                 .clip(shape = CircleShape)
         )
         Text(
-            text = item.contact.name,
+            text = dgData.contact.name,
             modifier = Modifier
                 .tag("tvSender")
                 .padding(start = paddingM),
             style = typography.body1
         )
         Text(
-            text = item.lastMessage.text,
+            text = dgData.lastMessage.text,
             modifier = Modifier
                 .tag("tvLastMessage")
                 .padding(start = paddingM, top = paddingS),
             style = typography.body2
         )
         Text(
-            text = item.lastMessage.date,
+            text = item.formattedDate,
             modifier = Modifier
                 .tag("tvLastMessageTime"),
             style = typography.caption
@@ -93,7 +90,7 @@ fun DialogListItem(item: DialogPreview) {
             gravity = ContentGravity.Center
         ) {
             Text(
-                text = item.unreadCount.toString(),
+                text = dgData.unreadCount.toString(),
                 style = typography.body2.copy(color = Color.White)
             )
         }
@@ -105,18 +102,7 @@ fun DialogListItem(item: DialogPreview) {
 fun DialogListItemPreview() {
     AppTheme {
         DialogListItem(
-            item = DialogPreview(
-                contact = Sender(
-                    id = 1,
-                    name = "McFly",
-                    avatar = R.drawable.avatar_mc_fly
-                ),
-                lastMessage = MessagePreview(
-                    text = "It's time",
-                    date = "15:02"
-                ),
-                unreadCount = 1
-            )
+            getFakeDialogViewData()[0]
         )
     }
 }

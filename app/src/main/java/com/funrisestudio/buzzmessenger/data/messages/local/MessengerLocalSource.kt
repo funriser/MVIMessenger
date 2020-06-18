@@ -1,6 +1,6 @@
-package com.funrisestudio.buzzmessenger.data.local
+package com.funrisestudio.buzzmessenger.data.messages.local
 
-import com.funrisestudio.buzzmessenger.Sender
+import com.funrisestudio.buzzmessenger.domain.Sender
 import com.funrisestudio.buzzmessenger.core.Result
 import com.funrisestudio.buzzmessenger.data.room.MessagesDao
 import java.lang.Exception

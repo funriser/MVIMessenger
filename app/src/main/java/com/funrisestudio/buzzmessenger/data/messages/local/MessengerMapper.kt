@@ -1,8 +1,9 @@
-package com.funrisestudio.buzzmessenger.data.local
+package com.funrisestudio.buzzmessenger.data.messages.local
 
-import com.funrisestudio.buzzmessenger.Sender
+import com.funrisestudio.buzzmessenger.domain.Sender
 import com.funrisestudio.buzzmessenger.data.room.entity.MessageRow
 import com.funrisestudio.buzzmessenger.data.room.entity.SenderRow
+import java.util.*
 import javax.inject.Inject
 
 class MessengerMapper @Inject constructor() {
@@ -20,7 +21,8 @@ class MessengerMapper @Inject constructor() {
     fun toMessageRow(sender: Sender, message: String): MessageRow {
         return MessageRow(
             senderId = sender.id,
-            message = message
+            message = message,
+            timestamp = Date()
         )
     }
 

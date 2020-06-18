@@ -1,8 +1,8 @@
 package com.funrisestudio.buzzmessenger.core.di
 
 import android.content.Context
-import com.funrisestudio.buzzmessenger.data.MessengerRepository
-import com.funrisestudio.buzzmessenger.data.MessengerRepositoryImpl
+import com.funrisestudio.buzzmessenger.data.messages.MessengerRepository
+import com.funrisestudio.buzzmessenger.data.messages.MessengerRepositoryImpl
 import com.funrisestudio.buzzmessenger.data.MessengerServiceController
 import com.funrisestudio.buzzmessenger.data.MessengerServiceControllerImpl
 import com.funrisestudio.buzzmessenger.data.room.AppDatabase

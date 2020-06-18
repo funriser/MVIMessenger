@@ -1,7 +1,7 @@
 package com.funrisestudio.buzzmessenger.data
 
 import com.funrisestudio.buzzmessenger.Notifier
-import com.funrisestudio.buzzmessenger.Sender
+import com.funrisestudio.buzzmessenger.domain.Sender
 import com.funrisestudio.buzzmessenger.core.fold
 import com.funrisestudio.buzzmessenger.domain.ReceiveMessage
 import javax.inject.Inject
