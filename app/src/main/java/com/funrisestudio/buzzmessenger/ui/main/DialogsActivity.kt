@@ -10,6 +10,7 @@ import androidx.ui.core.setContent
 import androidx.ui.foundation.*
 import androidx.ui.layout.Column
 import androidx.ui.layout.fillMaxSize
+import androidx.ui.material.CircularProgressIndicator
 import androidx.ui.material.IconButton
 import androidx.ui.material.Scaffold
 import androidx.ui.material.TopAppBar
@@ -24,14 +25,14 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private val mainViewModel: MainViewModel by viewModels()
+    private val dialogsViewModel: DialogsViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
                 MainScreen {
-                    observe(liveData = mainViewModel.dialogs)
+                    observe(liveData = dialogsViewModel.viewState)
                 }
             }
         }
@@ -49,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 }
 
 @Composable
-fun MainScreen(dialogsProvider: @Composable() () -> List<DialogViewData>?) {
+fun MainScreen(viewStateProvider: @Composable() () -> DialogsViewState?) {
     Scaffold(
         topAppBar = {
             TopAppBar(
@@ -62,19 +63,28 @@ fun MainScreen(dialogsProvider: @Composable() () -> List<DialogViewData>?) {
             )
         }
     ) {
-        MainContent(dialogsProvider)
+        MainContent(viewStateProvider)
     }
 }
 
 @Composable
-fun MainContent(dialogsProvider: @Composable() () -> List<DialogViewData>?) {
-    dialogsProvider()?.let { dialogs ->
+fun MainContent(viewStateProvider: @Composable() () -> DialogsViewState?) {
+    val viewState = viewStateProvider()?:return
+    if (viewState.items.isNotEmpty()) {
         VerticalScroller(modifier = Modifier.fillMaxSize()) {
             Column {
-                dialogs.forEach {
+                viewState.items.forEach {
                     DialogListItem(item = it)
                 }
             }
+        }
+    }
+    if (viewState.isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            gravity = ContentGravity.Center
+        ) {
+            CircularProgressIndicator()
         }
     }
 }
@@ -84,7 +94,9 @@ fun MainContent(dialogsProvider: @Composable() () -> List<DialogViewData>?) {
 fun MainScreenPreview() {
     AppTheme {
         MainScreen {
-            getFakeDialogViewData()
+            DialogsViewState.createDialogsReceived(
+                getFakeDialogViewData()
+            )
         }
     }
 }

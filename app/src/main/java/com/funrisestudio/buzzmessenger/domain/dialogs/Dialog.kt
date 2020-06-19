@@ -1,5 +1,6 @@
-package com.funrisestudio.buzzmessenger.domain
+package com.funrisestudio.buzzmessenger.domain.dialogs
 
+import com.funrisestudio.buzzmessenger.domain.Sender
 import java.util.*
 
 data class Dialog(

@@ -1,6 +1,6 @@
 package com.funrisestudio.buzzmessenger.ui.main
 
-import com.funrisestudio.buzzmessenger.domain.Dialog
+import com.funrisestudio.buzzmessenger.domain.dialogs.Dialog
 import com.funrisestudio.buzzmessenger.ui.utils.DateFormat
 import javax.inject.Inject
 

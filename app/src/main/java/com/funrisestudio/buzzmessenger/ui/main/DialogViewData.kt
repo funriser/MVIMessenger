@@ -2,8 +2,8 @@ package com.funrisestudio.buzzmessenger.ui.main
 
 import com.funrisestudio.buzzmessenger.data.contacts
 import com.funrisestudio.buzzmessenger.data.messages
-import com.funrisestudio.buzzmessenger.domain.Dialog
-import com.funrisestudio.buzzmessenger.domain.MessagePreview
+import com.funrisestudio.buzzmessenger.domain.dialogs.Dialog
+import com.funrisestudio.buzzmessenger.domain.dialogs.MessagePreview
 import java.util.*
 
 data class DialogViewData(

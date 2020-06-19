@@ -1,6 +1,6 @@
 package com.funrisestudio.buzzmessenger.data.dialogs.local
 
-import com.funrisestudio.buzzmessenger.domain.Dialog
+import com.funrisestudio.buzzmessenger.domain.dialogs.Dialog
 import com.funrisestudio.buzzmessenger.data.room.MessagesDao
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

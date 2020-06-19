@@ -1,7 +1,7 @@
 package com.funrisestudio.buzzmessenger.data.dialogs.local
 
-import com.funrisestudio.buzzmessenger.domain.Dialog
-import com.funrisestudio.buzzmessenger.domain.MessagePreview
+import com.funrisestudio.buzzmessenger.domain.dialogs.Dialog
+import com.funrisestudio.buzzmessenger.domain.dialogs.MessagePreview
 import com.funrisestudio.buzzmessenger.domain.Sender
 import com.funrisestudio.buzzmessenger.data.room.entity.DialogRow
 import javax.inject.Inject
