@@ -1,5 +1,7 @@
 package com.funrisestudio.buzzmessenger.ui.messenger
 
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -16,6 +18,7 @@ import androidx.ui.res.vectorResource
 import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
 import com.funrisestudio.buzzmessenger.R
+import com.funrisestudio.buzzmessenger.core.navigation.ToMessages
 import com.funrisestudio.buzzmessenger.data.contacts
 import com.funrisestudio.buzzmessenger.domain.Sender
 import com.funrisestudio.buzzmessenger.ui.*
@@ -40,6 +43,16 @@ class ConversationActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    companion object {
+
+        fun getIntent(context: Context, sender: Sender): Intent {
+            return Intent(context, ConversationActivity::class.java).apply {
+                putExtra(ToMessages.KEY_SENDER, sender)
+            }
+        }
+
     }
 
 }

@@ -2,7 +2,6 @@ package com.funrisestudio.buzzmessenger
 
 import android.app.*
 import android.content.Context
-import android.content.Intent
 import android.graphics.drawable.Icon
 import android.os.Build
 import androidx.ui.graphics.toArgb
@@ -41,7 +40,7 @@ class NotifierImpl @Inject constructor(
     }
 
     override fun sendMessageNotification(sender: Sender, message: String) {
-        val intent = createMessengerBubbleIntent()
+        val intent = createMessengerBubbleIntent(sender)
         val avatarIcon = Icon.createWithResource(context, sender.avatar)
 
         val bubbleData = Notification.BubbleMetadata.Builder(intent, avatarIcon)
@@ -68,9 +67,10 @@ class NotifierImpl @Inject constructor(
         notificationManager.notify(ID, notification)
     }
 
-    private fun createMessengerBubbleIntent(): PendingIntent {
-        val target = Intent(context, ConversationActivity::class.java)
-        return PendingIntent.getActivity(context, 0, target, 0 /* flags */)
+    private fun createMessengerBubbleIntent(sender: Sender): PendingIntent {
+        val target = ConversationActivity.getIntent(context, sender)
+        return PendingIntent.getActivity(context, 0, target,
+            PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
     private fun createNotificationChannel(nm: NotificationManager) {
