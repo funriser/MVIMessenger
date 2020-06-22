@@ -34,7 +34,7 @@ interface MessagesDao {
         insertMessage(messageRow)
     }
 
-    @Query("SELECT s.id, s.name, s.avatar, m1.message as lastMessage, m1.timestamp as lastMessageDate FROM senders s JOIN messages m1 ON (s.id = m1.senderId) LEFT OUTER JOIN messages m2 ON (s.id = m2.senderId AND  (m1.timestamp < m2.timestamp OR (m1.timestamp = m2.timestamp AND m1.id < m2.id))) WHERE m2.id IS NULL;")
+    @Query("SELECT s.id, s.name, s.avatar, m1.message as lastMessage, m1.timestamp as lastMessageDate, m3.unreadCount FROM senders s JOIN messages m1 ON (s.id = m1.senderId) LEFT OUTER JOIN messages m2 ON (s.id = m2.senderId AND  (m1.timestamp < m2.timestamp OR (m1.timestamp = m2.timestamp AND m1.id < m2.id))) JOIN (SELECT COUNT(*) as unreadCount, senderId FROM messages GROUP BY senderId) as m3 ON s.id = m3.senderId WHERE m2.id IS NULL;")
     fun getDialogs(): Flow<List<DialogRow>>
 
 }
@@ -47,6 +47,6 @@ class Converters {
 
     @TypeConverter
     fun dateToTimestamp(date: Date?): Long? {
-        return date?.time?.toLong()
+        return date?.time
     }
 }

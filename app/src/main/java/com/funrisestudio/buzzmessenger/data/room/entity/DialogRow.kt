@@ -7,5 +7,6 @@ class DialogRow(
     @Embedded
     val sender: SenderRow,
     val lastMessage: String,
-    val lastMessageDate: Date
+    val lastMessageDate: Date,
+    val unreadCount: Int
 )

@@ -24,7 +24,7 @@ class DialogsMapper @Inject constructor() {
                     text = lastMessage,
                     date = lastMessageDate
                 ),
-                unreadCount = 1
+                unreadCount = unreadCount
             )
         }
     }
