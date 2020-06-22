@@ -5,7 +5,7 @@ import android.content.Intent
 import com.funrisestudio.buzzmessenger.core.navigation.NavAction
 import com.funrisestudio.buzzmessenger.core.navigation.Navigator
 import com.funrisestudio.buzzmessenger.core.navigation.ToMessages
-import com.funrisestudio.buzzmessenger.ui.messenger.MessengerActivity
+import com.funrisestudio.buzzmessenger.ui.messenger.ConversationActivity
 import javax.inject.Inject
 
 class DialogsNavigator @Inject constructor(): Navigator<NavAction.DialogNavAction>() {
@@ -13,8 +13,8 @@ class DialogsNavigator @Inject constructor(): Navigator<NavAction.DialogNavActio
     override fun handleAction(context: Context, action: NavAction.DialogNavAction) {
         when(action) {
             is ToMessages -> {
-                Intent(context, MessengerActivity::class.java).also {
-                    it.putExtra(MessengerActivity.KEY_SENDER_ID, action.senderId)
+                Intent(context, ConversationActivity::class.java).also {
+                    it.putExtra(ToMessages.KEY_SENDER, action.sender)
                     context.startActivity(it)
                 }
             }

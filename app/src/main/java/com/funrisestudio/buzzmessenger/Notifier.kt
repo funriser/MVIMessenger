@@ -12,7 +12,7 @@ import com.funrisestudio.buzzmessenger.Notifier.Companion.CHANNEL_NAME
 import com.funrisestudio.buzzmessenger.Notifier.Companion.ID
 import com.funrisestudio.buzzmessenger.domain.Sender
 import com.funrisestudio.buzzmessenger.ui.colorPrimary
-import com.funrisestudio.buzzmessenger.ui.messenger.MessengerActivity
+import com.funrisestudio.buzzmessenger.ui.messenger.ConversationActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.*
 import javax.inject.Inject
@@ -69,7 +69,7 @@ class NotifierImpl @Inject constructor(
     }
 
     private fun createMessengerBubbleIntent(): PendingIntent {
-        val target = Intent(context, MessengerActivity::class.java)
+        val target = Intent(context, ConversationActivity::class.java)
         return PendingIntent.getActivity(context, 0, target, 0 /* flags */)
     }
 

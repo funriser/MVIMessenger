@@ -56,9 +56,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initNavigation() {
-        observe(dialogsViewModel.toMessages) { id ->
-            id?:return@observe
-            navigator.handleAction(this, ToMessages(id))
+        observe(dialogsViewModel.toMessages) { sender ->
+            sender?:return@observe
+            navigator.handleAction(this, ToMessages(sender))
         }
     }
 

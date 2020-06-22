@@ -66,6 +66,35 @@ class DefaultStore<A : Action, V : ViewState> @Inject constructor(
 
 }
 
+@FlowPreview
+@ExperimentalCoroutinesApi
+class PresentationStore<A : Action, V : ViewState> @Inject constructor(
+    private val reducer: Reducer<A, V>,
+    initialState: V
+) : Store<A, V> {
+
+    private val allActions = BroadcastChannel<A>(Channel.BUFFERED)
+    private val states = ConflatedBroadcastChannel(initialState)
+
+    override fun wire(scope: CoroutineScope) {
+        allActions.asFlow()
+            .withLatestFrom(states.asFlow()) { action, states ->
+                reducer.reduce(states, action)
+            }
+            .onEach {
+                states.offer(it)
+            }
+            .launchIn(scope)
+    }
+
+    override fun processAction(action: A) {
+        allActions.offer(action)
+    }
+
+    override fun observeViewState(): Flow<V> = states.asFlow().buffer()
+
+}
+
 interface Reducer<A : Action, V : ViewState> {
     fun reduce(viewState: V, action: A): V
 }
