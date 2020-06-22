@@ -21,40 +21,64 @@ import androidx.ui.res.vectorResource
 import androidx.ui.tooling.preview.Preview
 import com.funrisestudio.buzzmessenger.data.messages.MessengerService
 import com.funrisestudio.buzzmessenger.R
+import com.funrisestudio.buzzmessenger.core.navigation.NavAction
+import com.funrisestudio.buzzmessenger.core.navigation.Navigator
+import com.funrisestudio.buzzmessenger.core.navigation.ToMessages
+import com.funrisestudio.buzzmessenger.core.observe
 import com.funrisestudio.buzzmessenger.ui.AppTheme
 import com.funrisestudio.buzzmessenger.ui.ErrorSnackbar
 import com.funrisestudio.buzzmessenger.ui.observe
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val dialogsViewModel: DialogsViewModel by viewModels()
+    @Inject lateinit var navigator: Navigator<NavAction.DialogNavAction>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                MainScreen {
-                    observe(liveData = dialogsViewModel.viewState)
-                }
+                MainScreen(
+                    viewStateProvider = {
+                        observe(liveData = dialogsViewModel.viewState)
+                    },
+                    onDialogItemSelected ={
+                        dialogsViewModel.onDialogItemSelected(it)
+                    }
+                )
             }
         }
-        if (savedInstanceState == null) {
-            startMessageService()
+        initNavigation()
+        initMessaging(savedInstanceState == null)
+    }
+
+    private fun initNavigation() {
+        observe(dialogsViewModel.toMessages) { id ->
+            id?:return@observe
+            navigator.handleAction(this, ToMessages(id))
         }
     }
 
-    private fun startMessageService() {
-        Intent(this, MessengerService::class.java).also {
-            startService(it)
+    private fun initMessaging(isFirstStarted: Boolean) {
+        if (isFirstStarted) {
+            Intent(this, MessengerService::class.java).also {
+                startService(it)
+            }
         }
     }
 
 }
 
+typealias OnDialogItemSelected = (DialogViewData) -> Unit
+
 @Composable
-fun MainScreen(viewStateProvider: @Composable() () -> DialogsViewState?) {
+fun MainScreen(
+    viewStateProvider: @Composable() () -> DialogsViewState?,
+    onDialogItemSelected: OnDialogItemSelected
+) {
     Scaffold(
         topAppBar = {
             TopAppBar(
@@ -67,12 +91,15 @@ fun MainScreen(viewStateProvider: @Composable() () -> DialogsViewState?) {
             )
         }
     ) {
-        MainContent(viewStateProvider)
+        MainContent(viewStateProvider, onDialogItemSelected)
     }
 }
 
 @Composable
-fun MainContent(viewStateProvider: @Composable() () -> DialogsViewState?) {
+fun MainContent(
+    viewStateProvider: @Composable() () -> DialogsViewState?,
+    onDialogItemSelected: OnDialogItemSelected
+) {
     val viewState = viewStateProvider()?:return
     if (viewState.isLoading) {
         Box(
@@ -84,7 +111,8 @@ fun MainContent(viewStateProvider: @Composable() () -> DialogsViewState?) {
     } else {
         DialogsScreenBodyWrapper(
             state = viewState,
-            onErrorAction = {}
+            onErrorAction = {},
+            onDialogItemSelected = onDialogItemSelected
         )
     }
 }
@@ -93,7 +121,8 @@ fun MainContent(viewStateProvider: @Composable() () -> DialogsViewState?) {
 fun DialogsScreenBodyWrapper(
     modifier: Modifier = Modifier,
     state: DialogsViewState,
-    onErrorAction: () -> Unit
+    onErrorAction: () -> Unit,
+    onDialogItemSelected: OnDialogItemSelected
 ) {
     // State for showing the Snackbar error. This state will reset with the content of the lambda
     // inside stateFor each time the viewState input parameter changes.
@@ -104,7 +133,7 @@ fun DialogsScreenBodyWrapper(
 
     Stack(modifier = modifier.fillMaxSize()) {
         if (state.items.isNotEmpty()) {
-            DialogsScreenBody(items = state.items)
+            DialogsScreenBody(state.items, onDialogItemSelected)
         }
         ErrorSnackbar(
             showError = showSnackbarError,
@@ -117,11 +146,14 @@ fun DialogsScreenBodyWrapper(
 }
 
 @Composable
-fun DialogsScreenBody(items: List<DialogViewData>) {
+fun DialogsScreenBody(
+    items: List<DialogViewData>,
+    onDialogItemSelected: OnDialogItemSelected
+) {
     VerticalScroller(modifier = Modifier.fillMaxSize()) {
         Column {
             items.forEach {
-                DialogListItem(item = it)
+                DialogListItem(item = it, onClick = onDialogItemSelected)
             }
         }
     }
@@ -131,10 +163,15 @@ fun DialogsScreenBody(items: List<DialogViewData>) {
 @Composable
 fun MainScreenPreview() {
     AppTheme {
-        MainScreen {
-            DialogsViewState.createDialogsReceived(
-                getFakeDialogViewData()
-            )
-        }
+        MainScreen(
+            viewStateProvider = {
+                DialogsViewState.createDialogsReceived(
+                    getFakeDialogViewData()
+                )
+            },
+            onDialogItemSelected = {
+
+            }
+        )
     }
 }

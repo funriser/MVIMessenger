@@ -1,5 +1,9 @@
 package com.funrisestudio.buzzmessenger.core
 
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
@@ -26,4 +30,12 @@ fun <A, B: Any, R> Flow<A>.withLatestFrom(other: Flow<B>, transform: suspend (A,
             latestB.get()?.let { b -> emit(transform(a, b)) }
         }
     }
+}
+
+fun <T : Any, L : LiveData<T>> Fragment.observe(liveData: L, body: (T?) -> Unit) {
+    liveData.observe(viewLifecycleOwner, Observer(body))
+}
+
+fun <T : Any, L : LiveData<T>> AppCompatActivity.observe(liveData: L, body: (T?) -> Unit) {
+    liveData.observe(this, Observer(body))
 }

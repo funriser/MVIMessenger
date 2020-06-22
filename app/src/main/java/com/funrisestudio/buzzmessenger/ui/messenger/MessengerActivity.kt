@@ -17,24 +17,32 @@ class MessengerActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val senderId = intent.getIntExtra(KEY_SENDER_ID, -1)
+        require(senderId != -1) {
+            "Sender is not defined"
+        }
         setContent {
             AppTheme {
-                MessengerScreen()
+                MessengerScreen(senderId)
             }
         }
+    }
+
+    companion object {
+        const val KEY_SENDER_ID = "key_sender_id"
     }
 
 }
 
 @Composable
-fun MessengerScreen() {
+fun MessengerScreen(senderId: Int) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(),
         gravity = ContentGravity.Center
     ) {
-        Text(text = "Messenger will be there")
+        Text(text = "Messenger from sender $senderId will be there")
     }
 }
 
@@ -42,6 +50,6 @@ fun MessengerScreen() {
 @Composable
 fun MessengerPreview() {
     AppTheme {
-        MessengerScreen()
+        MessengerScreen(1)
     }
 }

@@ -28,7 +28,6 @@
         <activity
             android:name=".ui.messenger.MessengerActivity"
             android:allowEmbedded="true"
-            android:documentLaunchMode="always"
             android:label="@string/app_name"
             android:resizeableActivity="true" />
     </application>

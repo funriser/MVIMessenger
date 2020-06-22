@@ -1,12 +1,15 @@
 package com.funrisestudio.buzzmessenger.core.di
 
 import android.content.Context
+import com.funrisestudio.buzzmessenger.core.navigation.NavAction
+import com.funrisestudio.buzzmessenger.core.navigation.Navigator
 import com.funrisestudio.buzzmessenger.data.messages.MessengerRepository
 import com.funrisestudio.buzzmessenger.data.messages.MessengerRepositoryImpl
 import com.funrisestudio.buzzmessenger.data.MessengerServiceController
 import com.funrisestudio.buzzmessenger.data.MessengerServiceControllerImpl
 import com.funrisestudio.buzzmessenger.data.room.AppDatabase
 import com.funrisestudio.buzzmessenger.data.room.MessagesDao
+import com.funrisestudio.buzzmessenger.ui.main.DialogsNavigator
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -44,5 +47,8 @@ interface IDataModule {
     fun messengerController(
         messengerServiceControllerImpl: MessengerServiceControllerImpl
     ): MessengerServiceController
+
+    @Binds
+    fun navigator(dialogsNavigator: DialogsNavigator): Navigator<NavAction.DialogNavAction>
 
 }

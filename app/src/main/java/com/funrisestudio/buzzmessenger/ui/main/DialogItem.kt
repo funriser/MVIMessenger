@@ -4,10 +4,7 @@ import androidx.compose.Composable
 import androidx.ui.core.Modifier
 import androidx.ui.core.clip
 import androidx.ui.core.tag
-import androidx.ui.foundation.Box
-import androidx.ui.foundation.ContentGravity
-import androidx.ui.foundation.Image
-import androidx.ui.foundation.Text
+import androidx.ui.foundation.*
 import androidx.ui.foundation.shape.corner.CircleShape
 import androidx.ui.graphics.Color
 import androidx.ui.layout.*
@@ -17,12 +14,15 @@ import androidx.ui.unit.dp
 import com.funrisestudio.buzzmessenger.ui.*
 
 @Composable
-fun DialogListItem(item: DialogViewData) {
+fun DialogListItem(item: DialogViewData, onClick: (DialogViewData) -> Unit) {
     val dgData = item.dialog
     val avatarAsset = imageResource(dgData.contact.avatar)
     ConstraintLayout(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable(onClick = {
+                onClick(item)
+            })
             .padding(paddingM),
         constraintSet = ConstraintSet {
             val ivAvatar = tag("ivAvatar").apply {
@@ -102,7 +102,10 @@ fun DialogListItem(item: DialogViewData) {
 fun DialogListItemPreview() {
     AppTheme {
         DialogListItem(
-            getFakeDialogViewData()[0]
+            getFakeDialogViewData()[0],
+            onClick = {
+
+            }
         )
     }
 }
