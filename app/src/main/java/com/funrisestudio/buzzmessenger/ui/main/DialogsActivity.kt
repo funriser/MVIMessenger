@@ -32,7 +32,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class DialogsActivity : AppCompatActivity() {
 
     private val dialogsViewModel: DialogsViewModel by viewModels()
     @Inject lateinit var navigator: Navigator<NavAction.DialogNavAction>
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AppTheme {
-                MainScreen(
+                DialogsScreen(
                     viewStateProvider = {
                         observe(liveData = dialogsViewModel.viewState)
                     },
@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
 typealias OnDialogItemSelected = (DialogViewData) -> Unit
 
 @Composable
-fun MainScreen(
+fun DialogsScreen(
     viewStateProvider: @Composable() () -> DialogsViewState?,
     onDialogItemSelected: OnDialogItemSelected
 ) {
@@ -91,12 +91,12 @@ fun MainScreen(
             )
         }
     ) {
-        MainContent(viewStateProvider, onDialogItemSelected)
+        DialogsContent(viewStateProvider, onDialogItemSelected)
     }
 }
 
 @Composable
-fun MainContent(
+fun DialogsContent(
     viewStateProvider: @Composable() () -> DialogsViewState?,
     onDialogItemSelected: OnDialogItemSelected
 ) {
@@ -161,9 +161,9 @@ fun DialogsScreenBody(
 
 @Preview(showBackground = true)
 @Composable
-fun MainScreenPreview() {
+fun DialogsScreenPreview() {
     AppTheme {
-        MainScreen(
+        DialogsScreen(
             viewStateProvider = {
                 DialogsViewState.createDialogsReceived(
                     getFakeDialogViewData()
