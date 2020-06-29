@@ -76,9 +76,8 @@ fun ConversationScreen(
                 ConversationToolbarContent(it)
             }
         }
-        if (viewState.messages.isNotEmpty()) {
-            ConversationBody(viewState.messages)
-        }
+        ConversationBody(Modifier.weight(1f), viewState)
+        ConversationFooter()
     }
 }
 
@@ -89,8 +88,7 @@ fun ConversationToolbar(
 ) {
     Surface(
         color = colorPrimary,
-        elevation = paddingS,
-        shape = RectangleShape
+        elevation = paddingS
     ) {
         Row(
             Modifier.fillMaxWidth()
@@ -168,25 +166,62 @@ fun ConversationToolbarContent(contact: Contact) {
 }
 
 @Composable
-fun ConversationBody(messages: List<MessageViewData>) {
+fun ConversationBody(
+    modifier: Modifier,
+    viewState: ConversationViewState
+) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxWidth(),
         gravity = ContentGravity.BottomStart
     ) {
-        VerticalScroller(
-            modifier = Modifier
-                .padding(paddingXL),
-            scrollerPosition = ScrollerPosition(isReversed = true)
-        ) {
-            Column {
-                messages.forEachIndexed { i, msg ->
-                    val pdTop = if (i != 0) {
-                        paddingS
-                    } else {
-                        0.dp
+        if (viewState.messages.isNotEmpty()) {
+            VerticalScroller(
+                modifier = Modifier
+                    .padding(paddingXL),
+                scrollerPosition = ScrollerPosition(isReversed = true)
+            ) {
+                Column {
+                    viewState.messages.forEachIndexed { i, msg ->
+                        val pdTop = if (i != 0) {
+                            paddingS
+                        } else {
+                            0.dp
+                        }
+                        ConversationListItem(item = msg, paddingTop = pdTop)
                     }
-                    ConversationListItem(item = msg, paddingTop = pdTop)
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun ConversationFooter() {
+    Surface(
+        elevation = elevationDefault,
+        shape = RectangleShape
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(messageBoxHeight),
+            verticalGravity = Alignment.CenterVertically
+        ) {
+            HintTextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = paddingXL),
+                hint = "Message",
+                cursorColor = colorPrimary,
+                textStyle = typography.body2.copy(color = Color.Black),
+                hintStyle = typography.body2
+            )
+            IconButton(onClick = {}) {
+                Icon(
+                    asset = vectorResource(R.drawable.ic_send),
+                    tint = colorPrimary
+                )
             }
         }
     }

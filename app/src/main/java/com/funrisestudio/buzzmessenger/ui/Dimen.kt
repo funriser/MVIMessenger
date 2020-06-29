@@ -11,5 +11,9 @@ val paddingXL = 16.dp
 
 val cornerSize = 4.dp
 
+val elevationDefault = 6.dp
+
 val MyAppBarHeight = 56.dp
 val AppBarIconWidth = 68.dp
+
+val messageBoxHeight = 52.dp

@@ -30,6 +30,7 @@
             android:allowEmbedded="true"
             android:label="@string/app_name"
             android:resizeableActivity="true"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.BuzzMessenger.NoActionBar"/>
     </application>
 
