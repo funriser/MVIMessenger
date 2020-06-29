@@ -20,6 +20,7 @@ import androidx.ui.unit.dp
 import com.funrisestudio.buzzmessenger.R
 import com.funrisestudio.buzzmessenger.core.navigation.ToMessages
 import com.funrisestudio.buzzmessenger.data.contacts
+import com.funrisestudio.buzzmessenger.data.randomMessages
 import com.funrisestudio.buzzmessenger.domain.Contact
 import com.funrisestudio.buzzmessenger.ui.*
 import dagger.hilt.android.AndroidEntryPoint
@@ -174,7 +175,8 @@ fun ConversationBody(messages: List<MessageViewData>) {
     ) {
         VerticalScroller(
             modifier = Modifier
-                .padding(paddingXL)
+                .padding(paddingXL),
+            scrollerPosition = ScrollerPosition(isReversed = true)
         ) {
             Column {
                 messages.forEachIndexed { i, msg ->
@@ -196,8 +198,9 @@ fun MessengerPreview() {
     AppTheme {
         ConversationScreen(
             viewStateProvider = {
-                ConversationViewState.createContactReceived(
-                    contacts.random()
+                ConversationViewState.createConversationReceived(
+                    contact = contacts.random(),
+                    messages = randomMessages(30)
                 )
             }
         )

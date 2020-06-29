@@ -2,6 +2,9 @@ package com.funrisestudio.buzzmessenger.data
 
 import com.funrisestudio.buzzmessenger.R
 import com.funrisestudio.buzzmessenger.domain.Contact
+import com.funrisestudio.buzzmessenger.domain.entity.Message
+import com.funrisestudio.buzzmessenger.ui.messenger.MessageViewData
+import java.util.*
 
 val contacts = listOf(
     Contact(
@@ -24,3 +27,21 @@ val contacts = listOf(
 val messages = listOf(
     "Hey", "Hello", "It's time", "Wazzup", "Howdy"
 )
+
+fun randomMessages(count: Int): List<MessageViewData> {
+    val list = mutableListOf<MessageViewData>()
+    for (i in 0 until count) {
+        list.add(
+            MessageViewData(
+                message = Message(
+                    contactId = 0,
+                    text = messages.random(),
+                    timestamp = Date(),
+                    isReceived = true
+                ),
+                formattedDate = "$i:00"
+            )
+        )
+    }
+    return list
+}
