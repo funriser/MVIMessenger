@@ -1,14 +1,14 @@
 package com.funrisestudio.buzzmessenger.core.navigation
 
-import com.funrisestudio.buzzmessenger.domain.Sender
+import com.funrisestudio.buzzmessenger.domain.Contact
 
 sealed class NavAction {
     abstract class DialogNavAction: NavAction()
 }
-class ToMessages(val sender: Sender): NavAction.DialogNavAction() {
+class ToMessages(val contact: Contact): NavAction.DialogNavAction() {
 
     companion object {
-        const val KEY_SENDER = "key_sender"
+        const val KEY_CONTACT = "key_sender"
     }
 
 }

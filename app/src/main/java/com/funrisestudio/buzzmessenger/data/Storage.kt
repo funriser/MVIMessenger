@@ -1,20 +1,20 @@
 package com.funrisestudio.buzzmessenger.data
 
 import com.funrisestudio.buzzmessenger.R
-import com.funrisestudio.buzzmessenger.domain.Sender
+import com.funrisestudio.buzzmessenger.domain.Contact
 
 val contacts = listOf(
-    Sender(
+    Contact(
         id = 1,
         name = "McFly",
         avatar = R.drawable.avatar_mc_fly
     ),
-    Sender(
+    Contact(
         id = 2,
         name = "Dr Brown",
         avatar = R.drawable.avatar_mc_fly
     ),
-    Sender(
+    Contact(
         id = 3,
         name = "Biff",
         avatar = R.drawable.avatar_mc_fly

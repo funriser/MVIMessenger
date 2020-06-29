@@ -10,9 +10,16 @@ class ConversationReducer @Inject constructor(): Reducer<ConversationAction, Con
         action: ConversationAction
     ): ConversationViewState {
         return when(action)  {
-            is ConversationAction.SenderReceived -> {
-                ConversationViewState.createSenderReceived(action.sender)
+            is ConversationAction.ContactReceived -> {
+                ConversationViewState.createContactReceived(action.contact)
             }
+            is ConversationAction.ConversationReceived -> {
+                ConversationViewState.createConversationReceived(
+                    contact = viewState.contact,
+                    messages = action.messages
+                )
+            }
+            else -> viewState
         }
     }
 

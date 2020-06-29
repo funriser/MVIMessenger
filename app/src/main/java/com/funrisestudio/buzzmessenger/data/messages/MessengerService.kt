@@ -6,7 +6,7 @@ import android.os.IBinder
 import com.funrisestudio.buzzmessenger.data.MessengerServiceController
 import com.funrisestudio.buzzmessenger.data.contacts
 import com.funrisestudio.buzzmessenger.data.messages
-import com.funrisestudio.buzzmessenger.domain.Sender
+import com.funrisestudio.buzzmessenger.domain.Contact
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -35,8 +35,8 @@ class MessengerService : Service() {
         }
     }
 
-    private suspend fun onMessageReceived(sender: Sender, message: String) {
-        controller.onNewMessage(sender, message)
+    private suspend fun onMessageReceived(contact: Contact, message: String) {
+        controller.onNewMessage(contact, message)
     }
 
     override fun onBind(intent: Intent): IBinder? {

@@ -1,8 +1,9 @@
 package com.funrisestudio.buzzmessenger.core.di
 
-import com.funrisestudio.buzzmessenger.core.mvi.PresentationStore
-import com.funrisestudio.buzzmessenger.core.mvi.Reducer
-import com.funrisestudio.buzzmessenger.core.mvi.Store
+import com.funrisestudio.buzzmessenger.core.mvi.*
+import com.funrisestudio.buzzmessenger.data.conversation.ConversationRepositoryImpl
+import com.funrisestudio.buzzmessenger.domain.conversation.ConversationMiddleware
+import com.funrisestudio.buzzmessenger.domain.conversation.ConversationRepository
 import com.funrisestudio.buzzmessenger.ui.messenger.ConversationAction
 import com.funrisestudio.buzzmessenger.ui.messenger.ConversationReducer
 import com.funrisestudio.buzzmessenger.ui.messenger.ConversationViewState
@@ -22,8 +23,18 @@ interface IConversationModule {
 
     @Binds
     fun store(
-        store: PresentationStore<ConversationAction, ConversationViewState>
+        store: DefaultStore<ConversationAction, ConversationViewState>
     ): Store<ConversationAction, ConversationViewState>
+
+    @Binds
+    fun repository(
+        conversationRepositoryImpl: ConversationRepositoryImpl
+    ): ConversationRepository
+
+    @Binds
+    fun middleware(
+        conversationMiddleware: ConversationMiddleware
+    ): MiddleWare<ConversationAction, ConversationViewState>
 
     @Binds
     fun reducer(

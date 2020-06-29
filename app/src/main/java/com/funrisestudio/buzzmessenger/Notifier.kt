@@ -9,7 +9,7 @@ import com.funrisestudio.buzzmessenger.Notifier.Companion.CHANNEL_DESCRIPTION
 import com.funrisestudio.buzzmessenger.Notifier.Companion.CHANNEL_ID
 import com.funrisestudio.buzzmessenger.Notifier.Companion.CHANNEL_NAME
 import com.funrisestudio.buzzmessenger.Notifier.Companion.ID
-import com.funrisestudio.buzzmessenger.domain.Sender
+import com.funrisestudio.buzzmessenger.domain.Contact
 import com.funrisestudio.buzzmessenger.ui.colorPrimary
 import com.funrisestudio.buzzmessenger.ui.messenger.ConversationActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 interface Notifier {
 
-    fun sendMessageNotification(sender: Sender, message: String)
+    fun sendMessageNotification(contact: Contact, message: String)
 
     companion object {
         const val ID = 42
@@ -39,16 +39,16 @@ class NotifierImpl @Inject constructor(
             }
     }
 
-    override fun sendMessageNotification(sender: Sender, message: String) {
-        val intent = createMessengerBubbleIntent(sender)
-        val avatarIcon = Icon.createWithResource(context, sender.avatar)
+    override fun sendMessageNotification(contact: Contact, message: String) {
+        val intent = createMessengerBubbleIntent(contact)
+        val avatarIcon = Icon.createWithResource(context, contact.avatar)
 
         val bubbleData = Notification.BubbleMetadata.Builder(intent, avatarIcon)
                 .setDesiredHeight(600)
                 .build()
 
         val user = Person.Builder()
-            .setName(sender.name)
+            .setName(contact.name)
             .setIcon(avatarIcon)
             .setImportant(true)
             .build()
@@ -67,8 +67,8 @@ class NotifierImpl @Inject constructor(
         notificationManager.notify(ID, notification)
     }
 
-    private fun createMessengerBubbleIntent(sender: Sender): PendingIntent {
-        val target = ConversationActivity.getIntent(context, sender)
+    private fun createMessengerBubbleIntent(contact: Contact): PendingIntent {
+        val target = ConversationActivity.getIntent(context, contact)
         return PendingIntent.getActivity(context, 0, target,
             PendingIntent.FLAG_UPDATE_CURRENT)
     }
@@ -92,6 +92,6 @@ class NotifierImpl @Inject constructor(
 }
 
 class StubNotifier: Notifier {
-    override fun sendMessageNotification(sender: Sender, message: String) {
+    override fun sendMessageNotification(contact: Contact, message: String) {
     }
 }

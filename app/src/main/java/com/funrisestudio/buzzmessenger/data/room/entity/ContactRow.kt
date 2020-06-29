@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "senders")
-class SenderRow(
+class ContactRow(
     @PrimaryKey val id: Int,
     val name: String,
     val avatar: Int

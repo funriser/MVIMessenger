@@ -20,7 +20,7 @@ import androidx.ui.unit.dp
 import com.funrisestudio.buzzmessenger.R
 import com.funrisestudio.buzzmessenger.core.navigation.ToMessages
 import com.funrisestudio.buzzmessenger.data.contacts
-import com.funrisestudio.buzzmessenger.domain.Sender
+import com.funrisestudio.buzzmessenger.domain.Contact
 import com.funrisestudio.buzzmessenger.ui.*
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -47,9 +47,9 @@ class ConversationActivity : AppCompatActivity() {
 
     companion object {
 
-        fun getIntent(context: Context, sender: Sender): Intent {
+        fun getIntent(context: Context, contact: Contact): Intent {
             return Intent(context, ConversationActivity::class.java).apply {
-                putExtra(ToMessages.KEY_SENDER, sender)
+                putExtra(ToMessages.KEY_CONTACT, contact)
             }
         }
 
@@ -71,7 +71,7 @@ fun ConversationScreen(
                 }
             }
         ) {
-            viewState.sender?.let {
+            viewState.contact?.let {
                 ConversationToolbarContent(it)
             }
         }
@@ -115,7 +115,7 @@ fun ConversationToolbar(
 }
 
 @Composable
-fun ConversationToolbarContent(sender: Sender) {
+fun ConversationToolbarContent(contact: Contact) {
     ConstraintLayout(
         modifier = Modifier.fillMaxSize(),
         constraintSet = ConstraintSet {
@@ -140,14 +140,14 @@ fun ConversationToolbarContent(sender: Sender) {
         }
     ) {
         Image(
-            asset = imageResource(sender.avatar),
+            asset = imageResource(contact.avatar),
             modifier = Modifier
                 .tag("ivAvatar")
                 .size(40.dp)
                 .clip(shape = CircleShape)
         )
         Text(
-            text = sender.name,
+            text = contact.name,
             modifier = Modifier
                 .tag("tvSender")
                 .padding(start = paddingM),
@@ -169,7 +169,7 @@ fun MessengerPreview() {
     AppTheme {
         ConversationScreen(
             viewStateProvider = {
-                ConversationViewState.createSenderReceived(
+                ConversationViewState.createContactReceived(
                     contacts.random()
                 )
             }
