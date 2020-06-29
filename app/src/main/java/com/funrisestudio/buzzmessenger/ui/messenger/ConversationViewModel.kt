@@ -39,4 +39,10 @@ class ConversationViewModel @ViewModelInject constructor(
         store.processAction(ConversationAction.MessageInputChanged(newInput))
     }
 
+    fun onSendMessage() {
+        val currState = _viewState.value?:return
+        val action = ConversationAction.SendMessage(contact.id, currState.messageInput.text)
+        store.processAction(action)
+    }
+
 }

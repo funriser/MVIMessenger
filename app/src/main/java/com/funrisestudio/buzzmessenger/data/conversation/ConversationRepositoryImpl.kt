@@ -13,4 +13,8 @@ class ConversationRepositoryImpl @Inject constructor(
         return conversationLocalSource.getConversation(contactId)
     }
 
+    override suspend fun sendMessage(contactId: Int, text: String) {
+        return conversationLocalSource.sendMessage(contactId, text)
+    }
+
 }

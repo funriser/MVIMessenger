@@ -22,7 +22,7 @@ abstract class AppDatabase: RoomDatabase() {
 @Dao
 interface MessagesDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertContact(contactRow: ContactRow)
 
     @Insert

@@ -7,4 +7,6 @@ interface ConversationRepository {
 
     fun getConversation(contactId: Int): Flow<List<Message>>
 
+    suspend fun sendMessage(contactId: Int, text: String)
+
 }

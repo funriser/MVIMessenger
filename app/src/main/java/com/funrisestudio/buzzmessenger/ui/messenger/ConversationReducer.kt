@@ -1,5 +1,6 @@
 package com.funrisestudio.buzzmessenger.ui.messenger
 
+import androidx.ui.foundation.TextFieldValue
 import com.funrisestudio.buzzmessenger.core.mvi.Reducer
 import javax.inject.Inject
 
@@ -23,6 +24,11 @@ class ConversationReducer @Inject constructor(
             is ConversationAction.MessageInputChanged -> {
                 viewState.copy(
                     messageInput = action.newInput
+                )
+            }
+            is ConversationAction.SendMessage -> {
+                viewState.copy(
+                    messageInput = TextFieldValue("")
                 )
             }
             else -> viewState

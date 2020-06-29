@@ -43,6 +43,9 @@ class ConversationActivity : AppCompatActivity() {
                     },
                     onMessageInputChanged = {
                         conversationViewModel.onMessageInputChanged(it)
+                    },
+                    onSendMessageClicked = {
+                        conversationViewModel.onSendMessage()
                     }
                 )
             }
@@ -65,7 +68,8 @@ class ConversationActivity : AppCompatActivity() {
 fun ConversationScreen(
     viewStateProvider: @Composable() () -> ConversationViewState?,
     onNavigationClick: (() -> Unit)? = null,
-    onMessageInputChanged: ((TextFieldValue) -> Unit)? = null
+    onMessageInputChanged: ((TextFieldValue) -> Unit)? = null,
+    onSendMessageClicked: (() -> Unit)? = null
 ) {
     val viewState = viewStateProvider()?:return
     Column(modifier = Modifier.fillMaxSize()) {
@@ -81,7 +85,11 @@ fun ConversationScreen(
             }
         }
         ConversationBody(Modifier.weight(1f), viewState)
-        ConversationFooter(viewState.messageInput, onMessageInputChanged)
+        ConversationFooter(
+            messageInput = viewState.messageInput,
+            onMessageInputChanged = onMessageInputChanged,
+            onSendMessageClicked = onSendMessageClicked
+        )
     }
 }
 
@@ -203,7 +211,8 @@ fun ConversationBody(
 @Composable
 fun ConversationFooter(
     messageInput: TextFieldValue,
-    onMessageInputChanged: ((TextFieldValue) -> Unit)? = null
+    onMessageInputChanged: ((TextFieldValue) -> Unit)? = null,
+    onSendMessageClicked: (() -> Unit)? = null
 ) {
     Surface(
         elevation = elevationDefault,
@@ -226,7 +235,7 @@ fun ConversationFooter(
                 hintStyle = typography.body2,
                 onTextChanged = onMessageInputChanged
             )
-            IconButton(onClick = {}) {
+            IconButton(onClick = { onSendMessageClicked?.invoke() }) {
                 Icon(
                     asset = vectorResource(R.drawable.ic_send),
                     tint = colorPrimary

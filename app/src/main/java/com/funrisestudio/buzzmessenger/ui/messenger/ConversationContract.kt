@@ -11,6 +11,8 @@ sealed class ConversationAction : Action {
     data class ConversationReceived(val messages: List<Message>): ConversationAction()
     data class LoadConversation(val contactId: Int): ConversationAction()
     data class MessageInputChanged(val newInput: TextFieldValue): ConversationAction()
+    data class SendMessage(val contactId: Int, val message: String): ConversationAction()
+    object MessageSent: ConversationAction()
     object Loading: ConversationAction()
 }
 
