@@ -14,7 +14,7 @@ sealed class ConversationAction : Action {
 
 data class ConversationViewState(
     val contact: Contact?,
-    val messages: List<Message>
+    val messages: List<MessageViewData>
 ): ViewState {
 
     companion object {
@@ -35,7 +35,7 @@ data class ConversationViewState(
 
         fun createConversationReceived(
             contact: Contact?,
-            messages: List<Message>
+            messages: List<MessageViewData>
         ): ConversationViewState {
             return ConversationViewState(
                 contact = contact,

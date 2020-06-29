@@ -3,7 +3,9 @@ package com.funrisestudio.buzzmessenger.ui.messenger
 import com.funrisestudio.buzzmessenger.core.mvi.Reducer
 import javax.inject.Inject
 
-class ConversationReducer @Inject constructor(): Reducer<ConversationAction, ConversationViewState> {
+class ConversationReducer @Inject constructor(
+    private val conversationViewDataMapper: ConversationViewDataMapper
+): Reducer<ConversationAction, ConversationViewState> {
 
     override fun reduce(
         viewState: ConversationViewState,
@@ -16,7 +18,7 @@ class ConversationReducer @Inject constructor(): Reducer<ConversationAction, Con
             is ConversationAction.ConversationReceived -> {
                 ConversationViewState.createConversationReceived(
                     contact = viewState.contact,
-                    messages = action.messages
+                    messages = conversationViewDataMapper.getMessageViewDataList(action.messages)
                 )
             }
             else -> viewState

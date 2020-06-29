@@ -75,6 +75,9 @@ fun ConversationScreen(
                 ConversationToolbarContent(it)
             }
         }
+        if (viewState.messages.isNotEmpty()) {
+            ConversationBody(viewState.messages)
+        }
     }
 }
 
@@ -150,16 +153,40 @@ fun ConversationToolbarContent(contact: Contact) {
             text = contact.name,
             modifier = Modifier
                 .tag("tvSender")
-                .padding(start = paddingM),
+                .padding(start = paddingL),
             style = typography.body1.copy(color = Color.White)
         )
         Text(
             text = "Online",
             modifier = Modifier
                 .tag("tvIsOnline")
-                .padding(start = paddingM),
+                .padding(start = paddingL),
             style = typography.caption.copy(color = Color.White)
         )
+    }
+}
+
+@Composable
+fun ConversationBody(messages: List<MessageViewData>) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        gravity = ContentGravity.BottomStart
+    ) {
+        VerticalScroller(
+            modifier = Modifier
+                .padding(paddingXL)
+        ) {
+            Column {
+                messages.forEachIndexed { i, msg ->
+                    val pdTop = if (i != 0) {
+                        paddingS
+                    } else {
+                        0.dp
+                    }
+                    ConversationListItem(item = msg, paddingTop = pdTop)
+                }
+            }
+        }
     }
 }
 

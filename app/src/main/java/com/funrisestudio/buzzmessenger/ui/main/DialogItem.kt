@@ -23,7 +23,7 @@ fun DialogListItem(item: DialogViewData, onClick: (DialogViewData) -> Unit) {
             .clickable(onClick = {
                 onClick(item)
             })
-            .padding(paddingM),
+            .padding(paddingL),
         constraintSet = ConstraintSet {
             val ivAvatar = tag("ivAvatar").apply {
                 left constrainTo parent.left
@@ -65,14 +65,14 @@ fun DialogListItem(item: DialogViewData, onClick: (DialogViewData) -> Unit) {
             text = dgData.contact.name,
             modifier = Modifier
                 .tag("tvSender")
-                .padding(start = paddingM),
+                .padding(start = paddingL),
             style = typography.body1
         )
         Text(
             text = dgData.lastMessage.text,
             modifier = Modifier
                 .tag("tvLastMessage")
-                .padding(start = paddingM, top = paddingS),
+                .padding(start = paddingL, top = paddingS),
             style = typography.body2
         )
         Text(
