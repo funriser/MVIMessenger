@@ -3,6 +3,7 @@ package com.funrisestudio.buzzmessenger.ui.messenger
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import androidx.ui.foundation.TextFieldValue
 import com.funrisestudio.buzzmessenger.core.mvi.Store
 import com.funrisestudio.buzzmessenger.core.navigation.ToMessages
 import com.funrisestudio.buzzmessenger.domain.Contact
@@ -12,7 +13,7 @@ import kotlinx.coroutines.flow.onEach
 
 class ConversationViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle,
-    store: Store<ConversationAction, ConversationViewState>
+    private val store: Store<ConversationAction, ConversationViewState>
 ) : ViewModel() {
 
     private val contact: Contact =
@@ -32,6 +33,10 @@ class ConversationViewModel @ViewModelInject constructor(
             .launchIn(viewModelScope)
         store.processAction(ConversationAction.ContactReceived(contact))
         store.processAction(ConversationAction.LoadConversation(contact.id))
+    }
+
+    fun onMessageInputChanged(newInput: TextFieldValue) {
+        store.processAction(ConversationAction.MessageInputChanged(newInput))
     }
 
 }

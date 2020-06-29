@@ -40,6 +40,9 @@ class ConversationActivity : AppCompatActivity() {
                     },
                     onNavigationClick = {
                         onBackPressed()
+                    },
+                    onMessageInputChanged = {
+                        conversationViewModel.onMessageInputChanged(it)
                     }
                 )
             }
@@ -61,7 +64,8 @@ class ConversationActivity : AppCompatActivity() {
 @Composable
 fun ConversationScreen(
     viewStateProvider: @Composable() () -> ConversationViewState?,
-    onNavigationClick: (() -> Unit)? = null
+    onNavigationClick: (() -> Unit)? = null,
+    onMessageInputChanged: ((TextFieldValue) -> Unit)? = null
 ) {
     val viewState = viewStateProvider()?:return
     Column(modifier = Modifier.fillMaxSize()) {
@@ -77,7 +81,7 @@ fun ConversationScreen(
             }
         }
         ConversationBody(Modifier.weight(1f), viewState)
-        ConversationFooter()
+        ConversationFooter(viewState.messageInput, onMessageInputChanged)
     }
 }
 
@@ -197,7 +201,10 @@ fun ConversationBody(
 }
 
 @Composable
-fun ConversationFooter() {
+fun ConversationFooter(
+    messageInput: TextFieldValue,
+    onMessageInputChanged: ((TextFieldValue) -> Unit)? = null
+) {
     Surface(
         elevation = elevationDefault,
         shape = RectangleShape
@@ -212,10 +219,12 @@ fun ConversationFooter() {
                 modifier = Modifier
                     .weight(1f)
                     .padding(start = paddingXL),
+                textValue = messageInput,
                 hint = "Message",
                 cursorColor = colorPrimary,
                 textStyle = typography.body2.copy(color = Color.Black),
-                hintStyle = typography.body2
+                hintStyle = typography.body2,
+                onTextChanged = onMessageInputChanged
             )
             IconButton(onClick = {}) {
                 Icon(

@@ -2,7 +2,6 @@ package com.funrisestudio.buzzmessenger.ui
 
 import androidx.compose.Composable
 import androidx.compose.onActive
-import androidx.compose.state
 import androidx.ui.core.ContextAmbient
 import androidx.ui.core.Modifier
 import androidx.ui.foundation.Text
@@ -64,22 +63,23 @@ fun ErrorSnackbar(
 @Composable
 fun HintTextField(
     modifier: Modifier,
+    textValue: TextFieldValue,
     hint: String,
+    onTextChanged: ((TextFieldValue) -> Unit)? = null,
     cursorColor: Color = contentColor(),
     textStyle: TextStyle = typography.body2,
     hintStyle: TextStyle = typography.body2
 ) {
-    val state = state { TextFieldValue("") }
     Stack(
         modifier = modifier
     ) {
         TextField(
-            value = state.value,
-            onValueChange = { state.value = it },
+            value = textValue,
+            onValueChange = { onTextChanged?.invoke(it) },
             textStyle = textStyle,
             cursorColor = cursorColor
         )
-        if (state.value.text.isEmpty()) {
+        if (textValue.text.isEmpty()) {
             Text(
                 text = hint,
                 style = hintStyle
