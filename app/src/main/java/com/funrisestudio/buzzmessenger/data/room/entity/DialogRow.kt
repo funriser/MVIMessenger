@@ -8,5 +8,5 @@ class DialogRow(
     val contact: ContactRow,
     val lastMessage: String,
     val lastMessageDate: Date,
-    val unreadCount: Int
+    val unreadCount: Int = 0
 )

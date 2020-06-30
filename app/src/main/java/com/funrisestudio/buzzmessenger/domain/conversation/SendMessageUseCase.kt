@@ -1,6 +1,6 @@
-package com.funrisestudio.buzzmessenger.domain
+package com.funrisestudio.buzzmessenger.domain.conversation
 
-import com.funrisestudio.buzzmessenger.domain.conversation.ConversationRepository
+import com.funrisestudio.buzzmessenger.domain.FlowUseCase
 import com.funrisestudio.buzzmessenger.ui.messenger.ConversationAction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

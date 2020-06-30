@@ -12,7 +12,9 @@ sealed class ConversationAction : Action {
     data class LoadConversation(val contactId: Int): ConversationAction()
     data class MessageInputChanged(val newInput: TextFieldValue): ConversationAction()
     data class SendMessage(val contactId: Int, val message: String): ConversationAction()
+    data class MarkAsRead(val contactId: Int): ConversationAction()
     object MessageSent: ConversationAction()
+    object MessagesMarkedAsRead: ConversationAction()
     object Loading: ConversationAction()
 }
 

@@ -26,9 +26,14 @@ class ConversationLocalSource @Inject constructor(
             senderId = USER_ID,
             receiverId = contactId,
             message = text,
-            timestamp = Date()
+            timestamp = Date(),
+            isRead = true
         )
         return messengerDao.insertMessage(messageRow)
+    }
+
+    suspend fun markMessagesAsRead(contactId: Int) {
+        messengerDao.markMessagesAsRead(contactId)
     }
 
 }

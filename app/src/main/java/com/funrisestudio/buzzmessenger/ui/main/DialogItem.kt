@@ -52,7 +52,8 @@ fun DialogListItem(item: DialogViewData, onClick: (DialogViewData) -> Unit) {
                 tvSender,
                 tvLastMessage,
                 chainStyle = ConstraintSetBuilderScope.ChainStyle.Packed
-            )}
+            )
+        }
     ) {
         Image(
             asset = avatarAsset,
@@ -81,18 +82,23 @@ fun DialogListItem(item: DialogViewData, onClick: (DialogViewData) -> Unit) {
                 .tag("tvLastMessageTime"),
             style = typography.caption
         )
-        Box(
-            shape = CircleShape,
-            backgroundColor = colorAccent,
-            modifier = Modifier
-                .tag("tvUnreadCountHolder")
-                .size(24.dp),
-            gravity = ContentGravity.Center
-        ) {
-            Text(
-                text = dgData.unreadCount.toString(),
-                style = typography.body2.copy(color = Color.White)
-            )
+        if (dgData.unreadCount != 0) {
+            Box(
+                shape = CircleShape,
+                backgroundColor = colorAccent,
+                modifier = Modifier
+                    .tag("tvUnreadCountHolder")
+                    .size(24.dp),
+                gravity = ContentGravity.Center
+            ) {
+                Text(
+                    text = dgData.unreadCount.toString(),
+                    style = typography.body2.copy(color = Color.White)
+                )
+            }
+        } else {
+            //empty view
+            Column(modifier = Modifier.tag("tvUnreadCountHolder")) {}
         }
     }
 }

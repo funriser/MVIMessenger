@@ -17,4 +17,8 @@ class ConversationRepositoryImpl @Inject constructor(
         return conversationLocalSource.sendMessage(contactId, text)
     }
 
+    override suspend fun markMessagesAsRead(contactId: Int) {
+        conversationLocalSource.markMessagesAsRead(contactId)
+    }
+
 }

@@ -33,6 +33,7 @@ class ConversationViewModel @ViewModelInject constructor(
             .launchIn(viewModelScope)
         store.processAction(ConversationAction.ContactReceived(contact))
         store.processAction(ConversationAction.LoadConversation(contact.id))
+        store.processAction(ConversationAction.MarkAsRead(contact.id))
     }
 
     fun onMessageInputChanged(newInput: TextFieldValue) {

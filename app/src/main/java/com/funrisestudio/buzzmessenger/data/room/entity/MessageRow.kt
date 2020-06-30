@@ -14,5 +14,6 @@ data class MessageRow(
     val senderId: Int,
     val receiverId: Int = USER_ID,
     val message: String,
-    val timestamp: Date
+    val timestamp: Date,
+    val isRead: Boolean
 )

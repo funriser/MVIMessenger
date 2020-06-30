@@ -9,4 +9,6 @@ interface ConversationRepository {
 
     suspend fun sendMessage(contactId: Int, text: String)
 
+    suspend fun markMessagesAsRead(contactId: Int)
+
 }

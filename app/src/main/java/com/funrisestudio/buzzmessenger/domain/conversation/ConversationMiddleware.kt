@@ -1,7 +1,6 @@
 package com.funrisestudio.buzzmessenger.domain.conversation
 
 import com.funrisestudio.buzzmessenger.core.mvi.MiddleWare
-import com.funrisestudio.buzzmessenger.domain.SendMessageUseCase
 import com.funrisestudio.buzzmessenger.ui.messenger.ConversationAction
 import com.funrisestudio.buzzmessenger.ui.messenger.ConversationViewState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,7 +15,8 @@ import javax.inject.Inject
 @FlowPreview
 class ConversationMiddleware @Inject constructor(
     private val getConversationUseCase: GetConversationUseCase,
-    private val sendMessageUseCase: SendMessageUseCase
+    private val sendMessageUseCase: SendMessageUseCase,
+    private val markAsReadUseCase: MarkAsReadUseCase
 ): MiddleWare<ConversationAction, ConversationViewState>() {
 
     override fun bind(actionStream: Flow<ConversationAction>): Flow<ConversationAction> {
@@ -33,6 +33,9 @@ class ConversationMiddleware @Inject constructor(
                     is ConversationAction.SendMessage -> {
                         sendMessageUseCase.getFlow(it)
                     }
+                    is ConversationAction.MarkAsRead -> {
+                        markAsReadUseCase.getFlow(it)
+                    }
                     else -> throw IllegalStateException("Action is not supported")
                 }
             }
@@ -40,7 +43,8 @@ class ConversationMiddleware @Inject constructor(
 
     private fun isHandled(action: ConversationAction): Boolean {
         return action is ConversationAction.LoadConversation ||
-                action is ConversationAction.SendMessage
+                action is ConversationAction.SendMessage ||
+                action is ConversationAction.MarkAsRead
     }
 
 }

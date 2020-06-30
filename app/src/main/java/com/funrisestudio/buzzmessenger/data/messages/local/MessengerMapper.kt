@@ -22,7 +22,8 @@ class MessengerMapper @Inject constructor() {
         return MessageRow(
             senderId = contact.id,
             message = message,
-            timestamp = Date()
+            timestamp = Date(),
+            isRead = false
         )
     }
 
