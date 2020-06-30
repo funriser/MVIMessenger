@@ -1,10 +1,10 @@
 package com.funrisestudio.buzzmessenger.domain.dialogs
 
-import com.funrisestudio.buzzmessenger.domain.Sender
+import com.funrisestudio.buzzmessenger.domain.Contact
 import java.util.*
 
 data class Dialog(
-    val contact: Sender,
+    val contact: Contact,
     val lastMessage: MessagePreview,
     val unreadCount: Int
 )

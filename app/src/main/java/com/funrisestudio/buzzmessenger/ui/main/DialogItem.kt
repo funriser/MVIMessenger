@@ -23,7 +23,7 @@ fun DialogListItem(item: DialogViewData, onClick: (DialogViewData) -> Unit) {
             .clickable(onClick = {
                 onClick(item)
             })
-            .padding(paddingM),
+            .padding(paddingL),
         constraintSet = ConstraintSet {
             val ivAvatar = tag("ivAvatar").apply {
                 left constrainTo parent.left
@@ -52,7 +52,8 @@ fun DialogListItem(item: DialogViewData, onClick: (DialogViewData) -> Unit) {
                 tvSender,
                 tvLastMessage,
                 chainStyle = ConstraintSetBuilderScope.ChainStyle.Packed
-            )}
+            )
+        }
     ) {
         Image(
             asset = avatarAsset,
@@ -65,14 +66,14 @@ fun DialogListItem(item: DialogViewData, onClick: (DialogViewData) -> Unit) {
             text = dgData.contact.name,
             modifier = Modifier
                 .tag("tvSender")
-                .padding(start = paddingM),
+                .padding(start = paddingL),
             style = typography.body1
         )
         Text(
             text = dgData.lastMessage.text,
             modifier = Modifier
                 .tag("tvLastMessage")
-                .padding(start = paddingM, top = paddingS),
+                .padding(start = paddingL, top = paddingS),
             style = typography.body2
         )
         Text(
@@ -81,18 +82,23 @@ fun DialogListItem(item: DialogViewData, onClick: (DialogViewData) -> Unit) {
                 .tag("tvLastMessageTime"),
             style = typography.caption
         )
-        Box(
-            shape = CircleShape,
-            backgroundColor = colorAccent,
-            modifier = Modifier
-                .tag("tvUnreadCountHolder")
-                .size(24.dp),
-            gravity = ContentGravity.Center
-        ) {
-            Text(
-                text = dgData.unreadCount.toString(),
-                style = typography.body2.copy(color = Color.White)
-            )
+        if (dgData.unreadCount != 0) {
+            Box(
+                shape = CircleShape,
+                backgroundColor = colorAccent,
+                modifier = Modifier
+                    .tag("tvUnreadCountHolder")
+                    .size(24.dp),
+                gravity = ContentGravity.Center
+            ) {
+                Text(
+                    text = dgData.unreadCount.toString(),
+                    style = typography.body2.copy(color = Color.White)
+                )
+            }
+        } else {
+            //empty view
+            Column(modifier = Modifier.tag("tvUnreadCountHolder")) {}
         }
     }
 }

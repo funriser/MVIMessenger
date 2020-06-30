@@ -1,25 +1,60 @@
 package com.funrisestudio.buzzmessenger.ui.messenger
 
+import androidx.ui.foundation.TextFieldValue
 import com.funrisestudio.buzzmessenger.core.mvi.Action
 import com.funrisestudio.buzzmessenger.core.mvi.ViewState
-import com.funrisestudio.buzzmessenger.domain.Sender
+import com.funrisestudio.buzzmessenger.domain.Contact
+import com.funrisestudio.buzzmessenger.domain.entity.Message
 
 sealed class ConversationAction : Action {
-    data class SenderReceived(val sender: Sender): ConversationAction()
+    data class ContactReceived(val contact: Contact): ConversationAction()
+    data class ConversationReceived(val messages: List<Message>): ConversationAction()
+    data class LoadConversation(val contactId: Int): ConversationAction()
+    data class MessageInputChanged(val newInput: TextFieldValue): ConversationAction()
+    data class SendMessage(val contactId: Int, val message: String): ConversationAction()
+    data class MarkAsRead(val contactId: Int): ConversationAction()
+    object MessageSent: ConversationAction()
+    object MessagesMarkedAsRead: ConversationAction()
+    object Loading: ConversationAction()
 }
 
 data class ConversationViewState(
-    val sender: Sender?
+    val contact: Contact?,
+    val messages: List<MessageViewData>,
+    val messageInput: TextFieldValue,
+    val sendMessageEnabled: Boolean
 ): ViewState {
 
     companion object {
 
         fun createEmpty(): ConversationViewState {
-            return ConversationViewState(null)
+            return ConversationViewState(
+                contact = null,
+                messages = emptyList(),
+                messageInput = TextFieldValue(""),
+                sendMessageEnabled = false
+            )
         }
 
-        fun createSenderReceived(sender: Sender): ConversationViewState {
-            return ConversationViewState(sender)
+        fun createContactReceived(contact: Contact): ConversationViewState {
+            return ConversationViewState(
+                contact = contact,
+                messages = emptyList(),
+                messageInput = TextFieldValue(""),
+                sendMessageEnabled = false
+            )
+        }
+
+        fun createConversationReceived(
+            contact: Contact?,
+            messages: List<MessageViewData>
+        ): ConversationViewState {
+            return ConversationViewState(
+                contact = contact,
+                messages = messages,
+                messageInput = TextFieldValue(""),
+                sendMessageEnabled = false
+            )
         }
 
     }

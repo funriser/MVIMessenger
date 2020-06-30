@@ -9,11 +9,11 @@ class ReceiveMessage @Inject constructor(
 ): UseCase<Unit, ReceiveMessage.Params>() {
 
     override suspend fun run(params: Params): Result<Unit> {
-        return messengerRepository.saveMessage(params.sender, params.message)
+        return messengerRepository.saveMessage(params.contact, params.message)
     }
 
     class Params(
-        val sender: Sender,
+        val contact: Contact,
         val message: String
     )
 

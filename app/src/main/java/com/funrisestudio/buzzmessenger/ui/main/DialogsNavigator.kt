@@ -12,7 +12,7 @@ class DialogsNavigator @Inject constructor(): Navigator<NavAction.DialogNavActio
     override fun handleAction(context: Context, action: NavAction.DialogNavAction) {
         when(action) {
             is ToMessages -> {
-                val intent = ConversationActivity.getIntent(context, action.sender)
+                val intent = ConversationActivity.getIntent(context, action.contact)
                 context.startActivity(intent)
             }
             else -> throw IllegalStateException("Action is not supported")

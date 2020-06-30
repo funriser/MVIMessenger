@@ -20,7 +20,8 @@ import androidx.ui.unit.dp
 import com.funrisestudio.buzzmessenger.R
 import com.funrisestudio.buzzmessenger.core.navigation.ToMessages
 import com.funrisestudio.buzzmessenger.data.contacts
-import com.funrisestudio.buzzmessenger.domain.Sender
+import com.funrisestudio.buzzmessenger.data.randomMessages
+import com.funrisestudio.buzzmessenger.domain.Contact
 import com.funrisestudio.buzzmessenger.ui.*
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -39,6 +40,12 @@ class ConversationActivity : AppCompatActivity() {
                     },
                     onNavigationClick = {
                         onBackPressed()
+                    },
+                    onMessageInputChanged = {
+                        conversationViewModel.onMessageInputChanged(it)
+                    },
+                    onSendMessageClicked = {
+                        conversationViewModel.onSendMessage()
                     }
                 )
             }
@@ -47,9 +54,9 @@ class ConversationActivity : AppCompatActivity() {
 
     companion object {
 
-        fun getIntent(context: Context, sender: Sender): Intent {
+        fun getIntent(context: Context, contact: Contact): Intent {
             return Intent(context, ConversationActivity::class.java).apply {
-                putExtra(ToMessages.KEY_SENDER, sender)
+                putExtra(ToMessages.KEY_CONTACT, contact)
             }
         }
 
@@ -60,7 +67,9 @@ class ConversationActivity : AppCompatActivity() {
 @Composable
 fun ConversationScreen(
     viewStateProvider: @Composable() () -> ConversationViewState?,
-    onNavigationClick: (() -> Unit)? = null
+    onNavigationClick: (() -> Unit)? = null,
+    onMessageInputChanged: ((TextFieldValue) -> Unit)? = null,
+    onSendMessageClicked: (() -> Unit)? = null
 ) {
     val viewState = viewStateProvider()?:return
     Column(modifier = Modifier.fillMaxSize()) {
@@ -71,10 +80,16 @@ fun ConversationScreen(
                 }
             }
         ) {
-            viewState.sender?.let {
+            viewState.contact?.let {
                 ConversationToolbarContent(it)
             }
         }
+        ConversationBody(Modifier.weight(1f), viewState)
+        ConversationFooter(
+            viewState = viewState,
+            onMessageInputChanged = onMessageInputChanged,
+            onSendMessageClicked = onSendMessageClicked
+        )
     }
 }
 
@@ -85,8 +100,7 @@ fun ConversationToolbar(
 ) {
     Surface(
         color = colorPrimary,
-        elevation = paddingS,
-        shape = RectangleShape
+        elevation = paddingS
     ) {
         Row(
             Modifier.fillMaxWidth()
@@ -115,7 +129,7 @@ fun ConversationToolbar(
 }
 
 @Composable
-fun ConversationToolbarContent(sender: Sender) {
+fun ConversationToolbarContent(contact: Contact) {
     ConstraintLayout(
         modifier = Modifier.fillMaxSize(),
         constraintSet = ConstraintSet {
@@ -140,26 +154,101 @@ fun ConversationToolbarContent(sender: Sender) {
         }
     ) {
         Image(
-            asset = imageResource(sender.avatar),
+            asset = imageResource(contact.avatar),
             modifier = Modifier
                 .tag("ivAvatar")
                 .size(40.dp)
                 .clip(shape = CircleShape)
         )
         Text(
-            text = sender.name,
+            text = contact.name,
             modifier = Modifier
                 .tag("tvSender")
-                .padding(start = paddingM),
+                .padding(start = paddingL),
             style = typography.body1.copy(color = Color.White)
         )
         Text(
             text = "Online",
             modifier = Modifier
                 .tag("tvIsOnline")
-                .padding(start = paddingM),
+                .padding(start = paddingL),
             style = typography.caption.copy(color = Color.White)
         )
+    }
+}
+
+@Composable
+fun ConversationBody(
+    modifier: Modifier,
+    viewState: ConversationViewState
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth(),
+        gravity = ContentGravity.BottomStart
+    ) {
+        if (viewState.messages.isNotEmpty()) {
+            VerticalScroller(
+                modifier = Modifier
+                    .padding(paddingXL),
+                scrollerPosition = ScrollerPosition(isReversed = true)
+            ) {
+                Column {
+                    viewState.messages.forEachIndexed { i, msg ->
+                        val pdTop = if (i != 0) {
+                            paddingS
+                        } else {
+                            0.dp
+                        }
+                        ConversationListItem(item = msg, paddingTop = pdTop)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ConversationFooter(
+    viewState: ConversationViewState,
+    onMessageInputChanged: ((TextFieldValue) -> Unit)? = null,
+    onSendMessageClicked: (() -> Unit)? = null
+) {
+    Surface(
+        elevation = elevationDefault,
+        shape = RectangleShape
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(messageBoxHeight),
+            verticalGravity = Alignment.CenterVertically
+        ) {
+            HintTextField(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = paddingXL),
+                textValue = viewState.messageInput,
+                hint = "Message",
+                cursorColor = colorPrimary,
+                textStyle = typography.body2.copy(color = Color.Black),
+                hintStyle = typography.body2,
+                onTextChanged = onMessageInputChanged
+            )
+            AppIconButton(
+                onClick = { onSendMessageClicked?.invoke() },
+                enabled = viewState.sendMessageEnabled
+            ) {
+                Icon(
+                    asset = vectorResource(R.drawable.ic_send),
+                    tint = if (viewState.sendMessageEnabled) {
+                        colorPrimary
+                    } else {
+                        colorPrimaryLight
+                    }
+                )
+            }
+        }
     }
 }
 
@@ -169,8 +258,9 @@ fun MessengerPreview() {
     AppTheme {
         ConversationScreen(
             viewStateProvider = {
-                ConversationViewState.createSenderReceived(
-                    contacts.random()
+                ConversationViewState.createConversationReceived(
+                    contact = contacts.random(),
+                    messages = randomMessages(30)
                 )
             }
         )

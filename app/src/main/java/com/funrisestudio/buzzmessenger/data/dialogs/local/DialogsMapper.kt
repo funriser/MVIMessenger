@@ -2,7 +2,7 @@ package com.funrisestudio.buzzmessenger.data.dialogs.local
 
 import com.funrisestudio.buzzmessenger.domain.dialogs.Dialog
 import com.funrisestudio.buzzmessenger.domain.dialogs.MessagePreview
-import com.funrisestudio.buzzmessenger.domain.Sender
+import com.funrisestudio.buzzmessenger.domain.Contact
 import com.funrisestudio.buzzmessenger.data.room.entity.DialogRow
 import javax.inject.Inject
 
@@ -15,10 +15,10 @@ class DialogsMapper @Inject constructor() {
     private fun getDialogPreview(row: DialogRow): Dialog {
         return with(row) {
             Dialog(
-                contact = Sender(
-                    id = sender.id,
-                    name = sender.name,
-                    avatar = sender.avatar
+                contact = Contact(
+                    id = contact.id,
+                    name = contact.name,
+                    avatar = contact.avatar
                 ),
                 lastMessage = MessagePreview(
                     text = lastMessage,
