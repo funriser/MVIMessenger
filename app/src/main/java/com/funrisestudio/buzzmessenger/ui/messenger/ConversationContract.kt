@@ -19,7 +19,8 @@ sealed class ConversationAction : Action {
 data class ConversationViewState(
     val contact: Contact?,
     val messages: List<MessageViewData>,
-    val messageInput: TextFieldValue
+    val messageInput: TextFieldValue,
+    val sendMessageEnabled: Boolean
 ): ViewState {
 
     companion object {
@@ -28,7 +29,8 @@ data class ConversationViewState(
             return ConversationViewState(
                 contact = null,
                 messages = emptyList(),
-                messageInput = TextFieldValue("")
+                messageInput = TextFieldValue(""),
+                sendMessageEnabled = false
             )
         }
 
@@ -36,7 +38,8 @@ data class ConversationViewState(
             return ConversationViewState(
                 contact = contact,
                 messages = emptyList(),
-                messageInput = TextFieldValue("")
+                messageInput = TextFieldValue(""),
+                sendMessageEnabled = false
             )
         }
 
@@ -47,7 +50,8 @@ data class ConversationViewState(
             return ConversationViewState(
                 contact = contact,
                 messages = messages,
-                messageInput = TextFieldValue("")
+                messageInput = TextFieldValue(""),
+                sendMessageEnabled = false
             )
         }
 

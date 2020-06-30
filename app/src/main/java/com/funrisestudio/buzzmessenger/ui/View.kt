@@ -4,15 +4,14 @@ import androidx.compose.Composable
 import androidx.compose.onActive
 import androidx.ui.core.ContextAmbient
 import androidx.ui.core.Modifier
-import androidx.ui.foundation.Text
-import androidx.ui.foundation.TextField
-import androidx.ui.foundation.TextFieldValue
-import androidx.ui.foundation.contentColor
+import androidx.ui.foundation.*
 import androidx.ui.graphics.Color
 import androidx.ui.layout.Stack
 import androidx.ui.layout.padding
+import androidx.ui.layout.preferredSize
 import androidx.ui.material.Snackbar
 import androidx.ui.material.TextButton
+import androidx.ui.material.ripple.RippleIndication
 import androidx.ui.text.TextStyle
 import androidx.ui.unit.dp
 import com.funrisestudio.buzzmessenger.R
@@ -87,3 +86,26 @@ fun HintTextField(
         }
     }
 }
+
+@Composable
+fun AppIconButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    icon: @Composable() () -> Unit
+) {
+    Box(
+        modifier = modifier
+            .clickable(
+                onClick = onClick,
+                indication = RippleIndication(bounded = false, radius = RippleRadius),
+                enabled = enabled
+            )
+            .plus(IconButtonSizeModifier),
+        gravity = ContentGravity.Center,
+        children = icon
+    )
+}
+
+private val RippleRadius = 24.dp
+private val IconButtonSizeModifier = Modifier.preferredSize(48.dp)

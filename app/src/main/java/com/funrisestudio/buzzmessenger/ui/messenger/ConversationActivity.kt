@@ -86,7 +86,7 @@ fun ConversationScreen(
         }
         ConversationBody(Modifier.weight(1f), viewState)
         ConversationFooter(
-            messageInput = viewState.messageInput,
+            viewState = viewState,
             onMessageInputChanged = onMessageInputChanged,
             onSendMessageClicked = onSendMessageClicked
         )
@@ -210,7 +210,7 @@ fun ConversationBody(
 
 @Composable
 fun ConversationFooter(
-    messageInput: TextFieldValue,
+    viewState: ConversationViewState,
     onMessageInputChanged: ((TextFieldValue) -> Unit)? = null,
     onSendMessageClicked: (() -> Unit)? = null
 ) {
@@ -228,17 +228,24 @@ fun ConversationFooter(
                 modifier = Modifier
                     .weight(1f)
                     .padding(start = paddingXL),
-                textValue = messageInput,
+                textValue = viewState.messageInput,
                 hint = "Message",
                 cursorColor = colorPrimary,
                 textStyle = typography.body2.copy(color = Color.Black),
                 hintStyle = typography.body2,
                 onTextChanged = onMessageInputChanged
             )
-            IconButton(onClick = { onSendMessageClicked?.invoke() }) {
+            AppIconButton(
+                onClick = { onSendMessageClicked?.invoke() },
+                enabled = viewState.sendMessageEnabled
+            ) {
                 Icon(
                     asset = vectorResource(R.drawable.ic_send),
-                    tint = colorPrimary
+                    tint = if (viewState.sendMessageEnabled) {
+                        colorPrimary
+                    } else {
+                        colorPrimaryLight
+                    }
                 )
             }
         }

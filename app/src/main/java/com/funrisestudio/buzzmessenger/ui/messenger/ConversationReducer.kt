@@ -23,12 +23,14 @@ class ConversationReducer @Inject constructor(
             }
             is ConversationAction.MessageInputChanged -> {
                 viewState.copy(
-                    messageInput = action.newInput
+                    messageInput = action.newInput,
+                    sendMessageEnabled = action.newInput.text.isNotEmpty()
                 )
             }
             is ConversationAction.SendMessage -> {
                 viewState.copy(
-                    messageInput = TextFieldValue("")
+                    messageInput = TextFieldValue(""),
+                    sendMessageEnabled = false
                 )
             }
             else -> viewState
