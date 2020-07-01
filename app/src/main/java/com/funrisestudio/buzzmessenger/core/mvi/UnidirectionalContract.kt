@@ -29,6 +29,8 @@ interface Store<A : Action, V : ViewState> {
     fun processAction(action: A)
 
     fun observeViewState(): Flow<V>
+
+    fun interceptActions(): Flow<A>
 }
 
 @FlowPreview
@@ -64,6 +66,8 @@ class DefaultStore<A : Action, V : ViewState> @Inject constructor(
 
     override fun observeViewState(): Flow<V> = states.asFlow().buffer()
 
+    override fun interceptActions(): Flow<A> = allActions.asFlow().buffer()
+
 }
 
 @FlowPreview
@@ -92,6 +96,8 @@ class PresentationStore<A : Action, V : ViewState> @Inject constructor(
     }
 
     override fun observeViewState(): Flow<V> = states.asFlow().buffer()
+
+    override fun interceptActions(): Flow<A> = allActions.asFlow().buffer()
 
 }
 

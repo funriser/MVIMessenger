@@ -1,6 +1,5 @@
 package com.funrisestudio.buzzmessenger.ui.main
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -64,9 +63,7 @@ class DialogsActivity : AppCompatActivity() {
 
     private fun initMessaging(isFirstStarted: Boolean) {
         if (isFirstStarted) {
-            Intent(this, MessengerService::class.java).also {
-                startService(it)
-            }
+            startService(MessengerService.getGenerateMessagesIntent(this))
         }
     }
 

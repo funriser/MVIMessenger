@@ -19,7 +19,9 @@ import androidx.ui.tooling.preview.Preview
 import androidx.ui.unit.dp
 import com.funrisestudio.buzzmessenger.R
 import com.funrisestudio.buzzmessenger.core.navigation.ToMessages
+import com.funrisestudio.buzzmessenger.core.observe
 import com.funrisestudio.buzzmessenger.data.contacts
+import com.funrisestudio.buzzmessenger.data.messages.MessengerService
 import com.funrisestudio.buzzmessenger.data.randomMessages
 import com.funrisestudio.buzzmessenger.domain.Contact
 import com.funrisestudio.buzzmessenger.ui.*
@@ -49,6 +51,14 @@ class ConversationActivity : AppCompatActivity() {
                     }
                 )
             }
+        }
+        initResponseGenerator()
+    }
+
+    private fun initResponseGenerator() {
+        observe(conversationViewModel.generateResponse) { senderId: Int? ->
+            senderId?:return@observe
+            startService(MessengerService.getGenerateMessagesIntent(this, senderId))
         }
     }
 

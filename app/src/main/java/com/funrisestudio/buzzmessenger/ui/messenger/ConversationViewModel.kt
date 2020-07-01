@@ -4,6 +4,7 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.ui.foundation.TextFieldValue
+import com.funrisestudio.buzzmessenger.core.SingleLiveEvent
 import com.funrisestudio.buzzmessenger.core.mvi.Store
 import com.funrisestudio.buzzmessenger.core.navigation.ToMessages
 import com.funrisestudio.buzzmessenger.domain.Contact
@@ -23,6 +24,9 @@ class ConversationViewModel @ViewModelInject constructor(
     private val _viewState = MutableLiveData<ConversationViewState>()
     val viewState: LiveData<ConversationViewState> = _viewState
 
+    private val _generateResponse = SingleLiveEvent<Int>()
+    val generateResponse: LiveData<Int> = _generateResponse
+
     init {
         store.wire(viewModelScope)
         store.observeViewState()
@@ -33,7 +37,24 @@ class ConversationViewModel @ViewModelInject constructor(
             .launchIn(viewModelScope)
         store.processAction(ConversationAction.ContactReceived(contact))
         store.processAction(ConversationAction.LoadConversation(contact.id))
-        store.processAction(ConversationAction.MarkAsRead(contact.id))
+        initMessageReader()
+    }
+
+    //mark all received messages as read and send messages in response
+    private fun initMessageReader() {
+        store.interceptActions()
+            .onEach {
+                when(it) {
+                    is ConversationAction.ConversationReceived -> {
+                        store.processAction(ConversationAction.MarkAsRead(contact.id))
+                    }
+                    is ConversationAction.MessageSent -> {
+                        _generateResponse.value = contact.id
+                    }
+                    else -> {}
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     fun onMessageInputChanged(newInput: TextFieldValue) {
