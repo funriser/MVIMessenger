@@ -25,7 +25,9 @@ val contacts = listOf(
 )
 
 val messages = listOf(
-    "Hey", "Hello", "It's time", "Wazzup", "Howdy"
+    "Hey", "Hello", "It's time", "Wazzup", "Howdy",
+    "How are you doing?", "What time is now?", "Call me maybe",
+    "It's me", "Send memes", "I'll be there by 10", "Let's meet"
 )
 
 fun randomMessages(count: Int): List<MessageViewData> {
