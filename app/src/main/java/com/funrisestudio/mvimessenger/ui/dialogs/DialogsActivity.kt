@@ -27,6 +27,7 @@ import com.funrisestudio.mvimessenger.core.observe
 import com.funrisestudio.mvimessenger.ui.AppTheme
 import com.funrisestudio.mvimessenger.ui.ErrorSnackbar
 import com.funrisestudio.mvimessenger.ui.observe
+import com.funrisestudio.mvimessenger.ui.typography
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -98,12 +99,20 @@ fun DialogsContent(
     onDialogItemSelected: OnDialogItemSelected
 ) {
     val viewState = viewStateProvider()?:return
-    if (viewState.isLoading) {
+    if (viewState.hasNoDialogs || viewState.isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
             gravity = ContentGravity.Center
         ) {
-            CircularProgressIndicator()
+            if (viewState.isLoading) {
+                CircularProgressIndicator()
+            }
+            if (viewState.hasNoDialogs) {
+                Text(
+                    text = "Waiting for someone to write you...",
+                    style = typography.body2
+                )
+            }
         }
     } else {
         DialogsScreenBodyWrapper(

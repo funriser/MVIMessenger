@@ -14,6 +14,7 @@ sealed class DialogsAction : Action {
 data class DialogsViewState(
     val items: List<DialogViewData>,
     val isLoading: Boolean,
+    val hasNoDialogs: Boolean,
     val error: String
 ) : ViewState {
 
@@ -23,6 +24,7 @@ data class DialogsViewState(
             return DialogsViewState(
                 items = emptyList(),
                 isLoading = false,
+                hasNoDialogs = false,
                 error = ""
             )
         }
@@ -31,6 +33,7 @@ data class DialogsViewState(
             return DialogsViewState(
                 items = emptyList(),
                 isLoading = true,
+                hasNoDialogs = false,
                 error = ""
             )
         }
@@ -39,6 +42,7 @@ data class DialogsViewState(
             return DialogsViewState(
                 items = dialogs,
                 isLoading = false,
+                hasNoDialogs = dialogs.isEmpty(),
                 error = ""
             )
         }
@@ -50,6 +54,7 @@ data class DialogsViewState(
             return DialogsViewState(
                 items = currentDialogs,
                 isLoading = false,
+                hasNoDialogs = false,
                 error = errorMsg
             )
         }
