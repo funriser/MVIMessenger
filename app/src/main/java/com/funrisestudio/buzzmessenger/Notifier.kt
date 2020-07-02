@@ -4,6 +4,10 @@ import android.app.*
 import android.content.Context
 import android.graphics.drawable.Icon
 import android.os.Build
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.ui.graphics.toArgb
 import com.funrisestudio.buzzmessenger.Notifier.Companion.CHANNEL_DESCRIPTION
 import com.funrisestudio.buzzmessenger.Notifier.Companion.CHANNEL_ID
@@ -30,7 +34,9 @@ interface Notifier {
 
 class NotifierImpl @Inject constructor(
     @ApplicationContext private val context: Context
-): Notifier {
+): Notifier, LifecycleObserver {
+
+    private var isInBackground = false
 
     private val notificationManager by lazy {
         (context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager)
@@ -39,13 +45,13 @@ class NotifierImpl @Inject constructor(
             }
     }
 
-    override fun sendMessageNotification(contact: Contact, message: String) {
-        val intent = createMessengerBubbleIntent(contact)
-        val avatarIcon = Icon.createWithResource(context, contact.avatar)
+    init {
+        ProcessLifecycleOwner.get().lifecycle.addObserver(this)
+    }
 
-        val bubbleData = Notification.BubbleMetadata.Builder(intent, avatarIcon)
-                .setDesiredHeight(600)
-                .build()
+    override fun sendMessageNotification(contact: Contact, message: String) {
+        val intent = createMessengerIntent(contact)
+        val avatarIcon = Icon.createWithResource(context, contact.avatar)
 
         val user = Person.Builder()
             .setName(contact.name)
@@ -59,15 +65,22 @@ class NotifierImpl @Inject constructor(
         val notification = Notification.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification_msg)
             .setColor(colorPrimary.toArgb())
-            .setBubbleMetadata(bubbleData)
             .addPerson(user)
             .setStyle(style)
+            .setContentIntent(intent)
+            .setAutoCancel(true)
             .build()
 
-        notificationManager.notify(ID, notification)
+        dispatchNotification(notification)
     }
 
-    private fun createMessengerBubbleIntent(contact: Contact): PendingIntent {
+    private fun dispatchNotification(notification: Notification) {
+        if (isInBackground) {
+            notificationManager.notify(ID, notification)
+        }
+    }
+
+    private fun createMessengerIntent(contact: Contact): PendingIntent {
         val target = ConversationActivity.getIntent(context, contact)
         return PendingIntent.getActivity(context, 0, target,
             PendingIntent.FLAG_UPDATE_CURRENT)
@@ -82,11 +95,21 @@ class NotifierImpl @Inject constructor(
                 importance
             ).apply {
                 description = CHANNEL_DESCRIPTION
-                setAllowBubbles(true)
             }
             // Register the channel with the system
             nm.createNotificationChannel(channel)
         }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun onStart() {
+        isInBackground = false
+        notificationManager.cancelAll()
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    fun onStop() {
+        isInBackground = true
     }
 
 }
