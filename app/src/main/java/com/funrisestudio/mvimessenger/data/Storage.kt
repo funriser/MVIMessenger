@@ -14,13 +14,13 @@ val contacts = listOf(
     ),
     Contact(
         id = 2,
-        name = "Dr Brown",
-        avatar = R.drawable.avatar_mc_fly
+        name = "Doc Brown",
+        avatar = R.drawable.avatar_dr_brown
     ),
     Contact(
         id = 3,
         name = "Biff",
-        avatar = R.drawable.avatar_mc_fly
+        avatar = R.drawable.avatar_biff
     )
 )
 
