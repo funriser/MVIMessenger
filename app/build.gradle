@@ -11,7 +11,7 @@ android {
     buildToolsVersion "30.0.0"
 
     defaultConfig {
-        applicationId "com.funrisestudio.buzzmessenger"
+        applicationId "com.funrisestudio.mvimessenger"
         minSdkVersion 29
         targetSdkVersion 30
         versionCode 1

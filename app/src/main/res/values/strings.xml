@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BuzzMessenger</string>
+    <string name="app_name">Messenger</string>
     <string name="err_unknown">Oops, something went wrong. Please, try again later</string>
     <string name="err_retry">RETRY</string>
 </resources>
