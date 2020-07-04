@@ -6,7 +6,7 @@ import com.funrisestudio.mvimessenger.domain.dialogs.Dialog
 
 sealed class DialogsAction : Action {
     object LoadDialogs : DialogsAction()
-    class DialogsLoaded(val dialogs: List<Dialog>) : DialogsAction()
+    data class DialogsLoaded(val dialogs: List<Dialog>) : DialogsAction()
     class DialogsError(val throwable: Throwable) : DialogsAction()
     object Loading : DialogsAction()
 }
