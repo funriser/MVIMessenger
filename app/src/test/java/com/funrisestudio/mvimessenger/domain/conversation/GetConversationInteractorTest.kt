@@ -1,7 +1,6 @@
-package com.funrisestudio.mvimessenger.domain
+package com.funrisestudio.mvimessenger.domain.conversation
 
-import com.funrisestudio.mvimessenger.domain.conversation.ConversationRepository
-import com.funrisestudio.mvimessenger.domain.conversation.GetConversationUseCase
+import com.funrisestudio.mvimessenger.domain.TestData
 import com.funrisestudio.mvimessenger.domain.entity.Message
 import com.funrisestudio.mvimessenger.ui.conversation.ConversationAction
 import com.nhaarman.mockitokotlin2.mock
@@ -17,20 +16,21 @@ import org.junit.Before
 import org.junit.Test
 
 @ExperimentalCoroutinesApi
-class GetConversationUseCaseTest {
+class GetConversationInteractorTest {
 
     private val conversationRepository: ConversationRepository = mock()
-    private lateinit var interactor: GetConversationUseCase
+    private lateinit var interactor: GetConversationInteractor
 
     @Before
     fun setUp() {
-        interactor = GetConversationUseCase(conversationRepository)
+        interactor = GetConversationInteractor(conversationRepository)
     }
 
     @Test
     fun `should fetch conversations successfully`() = runBlockingTest {
         val contactId = 1
-        val mockedConversations = TestData.getMockedConversation()
+        val mockedConversations =
+            TestData.getMockedConversation()
         val testFlow = flow {
             emit(mockedConversations)
         }

@@ -1,8 +1,6 @@
-package com.funrisestudio.mvimessenger.domain
+package com.funrisestudio.mvimessenger.domain.dialogs
 
-import com.funrisestudio.mvimessenger.domain.dialogs.Dialog
-import com.funrisestudio.mvimessenger.domain.dialogs.DialogsRepository
-import com.funrisestudio.mvimessenger.domain.dialogs.GetDialogsUseCase
+import com.funrisestudio.mvimessenger.domain.TestData
 import com.funrisestudio.mvimessenger.ui.dialogs.DialogsAction
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -17,19 +15,20 @@ import org.junit.Before
 import org.junit.Test
 
 @ExperimentalCoroutinesApi
-class GetDialogsUseCaseTest {
+class GetDialogsInteractorTest {
 
     private val dialogsRepository: DialogsRepository = mock()
-    private lateinit var interactor: GetDialogsUseCase
+    private lateinit var interactor: GetDialogsInteractor
 
     @Before
     fun setUp() {
-        interactor = GetDialogsUseCase(dialogsRepository)
+        interactor = GetDialogsInteractor(dialogsRepository)
     }
 
     @Test
     fun `should fetch dialogs successfully`() = runBlockingTest {
-        val mockedDialogs = TestData.getMockedDialogs()
+        val mockedDialogs =
+            TestData.getMockedDialogs()
         val testFlow = flow {
             emit(mockedDialogs)
         }

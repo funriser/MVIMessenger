@@ -6,20 +6,24 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class ReceiveMessageUseCase @Inject constructor(
-    private val messengerRepository: MessengerRepository
-): FlowUseCase<Unit, ReceiveMessageUseCase.Params>() {
-
-    override fun getFlow(params: Params): Flow<Unit> {
-        return flow {
-            messengerRepository.saveMessage(params.contact, params.message)
-            emit(Unit)
-        }
-    }
+interface ReceiveMessageUseCase : FlowUseCase<Unit, ReceiveMessageUseCase.Params> {
 
     class Params(
         val contact: Contact,
         val message: String
     )
+
+}
+
+class ReceiveMessageInteractor @Inject constructor(
+    private val messengerRepository: MessengerRepository
+) : ReceiveMessageUseCase {
+
+    override fun getFlow(params: ReceiveMessageUseCase.Params): Flow<Unit> {
+        return flow {
+            messengerRepository.saveMessage(params.contact, params.message)
+            emit(Unit)
+        }
+    }
 
 }

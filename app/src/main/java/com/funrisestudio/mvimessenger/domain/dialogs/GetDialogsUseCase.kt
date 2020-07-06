@@ -6,9 +6,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class GetDialogsUseCase @Inject constructor(
+interface GetDialogsUseCase: FlowUseCase<DialogsAction, Unit>
+
+class GetDialogsInteractor @Inject constructor(
     private val dialogsRepository: DialogsRepository
-): FlowUseCase<DialogsAction, Unit>() {
+): GetDialogsUseCase {
 
     override fun getFlow(params: Unit): Flow<DialogsAction> {
         return dialogsRepository.getDialogs()

@@ -1,7 +1,5 @@
-package com.funrisestudio.mvimessenger.domain
+package com.funrisestudio.mvimessenger.domain.conversation
 
-import com.funrisestudio.mvimessenger.domain.conversation.ConversationRepository
-import com.funrisestudio.mvimessenger.domain.conversation.MarkAsReadUseCase
 import com.funrisestudio.mvimessenger.ui.conversation.ConversationAction
 import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -12,14 +10,14 @@ import org.junit.Before
 import org.junit.Test
 
 @ExperimentalCoroutinesApi
-class MarkAsReadUseCaseTest {
+class MarkAsReadInteractorTest {
 
     private val conversationRepository: ConversationRepository = mock()
-    private lateinit var interactor: MarkAsReadUseCase
+    private lateinit var interactor: MarkAsReadInteractor
 
     @Before
     fun setUp() {
-        interactor = MarkAsReadUseCase(conversationRepository)
+        interactor = MarkAsReadInteractor(conversationRepository)
     }
 
     @Test

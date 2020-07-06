@@ -6,14 +6,16 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class SendMessageUseCase @Inject constructor(
-    private val conversationRepository: ConversationRepository
-): FlowUseCase<ConversationAction, ConversationAction.SendMessage>() {
+interface MarkAsReadUseCase : FlowUseCase<ConversationAction, ConversationAction.MarkAsRead>
 
-    override fun getFlow(params: ConversationAction.SendMessage): Flow<ConversationAction> {
+class MarkAsReadInteractor @Inject constructor(
+    private val conversationRepository: ConversationRepository
+) : MarkAsReadUseCase {
+
+    override fun getFlow(params: ConversationAction.MarkAsRead): Flow<ConversationAction> {
         return flow {
-            conversationRepository.sendMessage(params.contactId, params.message)
-            emit(ConversationAction.MessageSent)
+            conversationRepository.markMessagesAsRead(params.contactId)
+            emit(ConversationAction.MessagesMarkedAsRead)
         }
     }
 

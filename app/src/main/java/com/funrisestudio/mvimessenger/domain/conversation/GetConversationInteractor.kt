@@ -6,9 +6,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class GetConversationUseCase @Inject constructor(
+interface GetConversationUseCase: FlowUseCase<ConversationAction, Int>
+
+class GetConversationInteractor @Inject constructor(
     private val conversationRepository: ConversationRepository
-): FlowUseCase<ConversationAction, Int>() {
+): GetConversationUseCase {
 
     override fun getFlow(params: Int): Flow<ConversationAction> {
         return conversationRepository.getConversation(params)

@@ -2,8 +2,7 @@ package com.funrisestudio.mvimessenger.core.di
 
 import com.funrisestudio.mvimessenger.core.mvi.*
 import com.funrisestudio.mvimessenger.data.conversation.ConversationRepositoryImpl
-import com.funrisestudio.mvimessenger.domain.conversation.ConversationMiddleware
-import com.funrisestudio.mvimessenger.domain.conversation.ConversationRepository
+import com.funrisestudio.mvimessenger.domain.conversation.*
 import com.funrisestudio.mvimessenger.ui.conversation.ConversationAction
 import com.funrisestudio.mvimessenger.ui.conversation.ConversationReducer
 import com.funrisestudio.mvimessenger.ui.conversation.ConversationViewState
@@ -25,6 +24,21 @@ interface IConversationModule {
     fun store(
         store: DefaultStore<ConversationAction, ConversationViewState>
     ): Store<ConversationAction, ConversationViewState>
+
+    @Binds
+    fun getConversationUseCase(
+        getConversationInteractor: GetConversationInteractor
+    ): GetConversationUseCase
+
+    @Binds
+    fun sendMessageUseCase(
+        sendMessageInteractor: SendMessageInteractor
+    ): SendMessageUseCase
+
+    @Binds
+    fun markAsReadUseCase(
+        markAsReadInteractor: MarkAsReadInteractor
+    ): MarkAsReadUseCase
 
     @Binds
     fun repository(
