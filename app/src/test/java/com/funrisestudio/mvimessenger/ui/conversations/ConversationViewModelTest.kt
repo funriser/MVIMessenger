@@ -1,10 +1,11 @@
-package com.funrisestudio.mvimessenger.ui
+package com.funrisestudio.mvimessenger.ui.conversations
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.ui.foundation.TextFieldValue
 import com.funrisestudio.mvimessenger.core.mvi.Store
 import com.funrisestudio.mvimessenger.core.navigation.ToMessages
 import com.funrisestudio.mvimessenger.domain.TestData
+import com.funrisestudio.mvimessenger.ui.ViewModelTest
 import com.funrisestudio.mvimessenger.ui.conversation.ConversationAction
 import com.funrisestudio.mvimessenger.ui.conversation.ConversationViewModel
 import com.funrisestudio.mvimessenger.ui.conversation.ConversationViewState

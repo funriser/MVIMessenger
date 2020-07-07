@@ -4,6 +4,7 @@ import com.funrisestudio.mvimessenger.domain.dialogs.Dialog
 import com.funrisestudio.mvimessenger.domain.dialogs.MessagePreview
 import com.funrisestudio.mvimessenger.domain.entity.Contact
 import com.funrisestudio.mvimessenger.domain.entity.Message
+import com.funrisestudio.mvimessenger.ui.conversation.MessageViewData
 import com.funrisestudio.mvimessenger.ui.dialogs.DialogViewData
 import java.util.*
 
@@ -14,14 +15,7 @@ object TestData {
     }
 
     fun getMockedConversation(): List<Message> {
-        return listOf(
-            Message(
-                contactId = 1,
-                text = "AAA",
-                timestamp = Date(),
-                isReceived = true
-            )
-        )
+        return listOf(getMockedMessage())
     }
 
     fun getDialogViewData(): DialogViewData {
@@ -36,6 +30,24 @@ object TestData {
             id = 1,
             name = "name",
             avatar = 0
+        )
+    }
+
+    fun getMessagesViewData(): List<MessageViewData> {
+        return listOf(
+            MessageViewData(
+                message = getMockedMessage(),
+                formattedDate = "01.01.2020"
+            )
+        )
+    }
+
+    private fun getMockedMessage(): Message {
+        return Message(
+            contactId = 1,
+            text = "AAA",
+            timestamp = Date(),
+            isReceived = true
         )
     }
 

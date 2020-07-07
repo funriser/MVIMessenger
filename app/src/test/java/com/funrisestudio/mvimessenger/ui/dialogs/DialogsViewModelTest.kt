@@ -1,10 +1,8 @@
-package com.funrisestudio.mvimessenger.ui
+package com.funrisestudio.mvimessenger.ui.dialogs
 
 import com.funrisestudio.mvimessenger.core.mvi.Store
 import com.funrisestudio.mvimessenger.domain.TestData
-import com.funrisestudio.mvimessenger.ui.dialogs.DialogsAction
-import com.funrisestudio.mvimessenger.ui.dialogs.DialogsViewModel
-import com.funrisestudio.mvimessenger.ui.dialogs.DialogsViewState
+import com.funrisestudio.mvimessenger.ui.ViewModelTest
 import com.funrisestudio.mvimessenger.utils.awaitValue
 import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
