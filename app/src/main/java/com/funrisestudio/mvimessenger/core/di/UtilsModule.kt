@@ -1,5 +1,7 @@
 package com.funrisestudio.mvimessenger.core.di
 
+import com.funrisestudio.mvimessenger.data.utils.CurrentDateProvider
+import com.funrisestudio.mvimessenger.data.utils.DateProvider
 import com.funrisestudio.mvimessenger.utils.Notifier
 import com.funrisestudio.mvimessenger.utils.NotifierImpl
 import dagger.Binds
@@ -15,5 +17,8 @@ interface UtilsModule {
     @Binds
     @Singleton
     fun notifier(notifierImpl: NotifierImpl): Notifier
+
+    @Binds
+    fun dateProvider(currentDateProvider: CurrentDateProvider): DateProvider
 
 }
