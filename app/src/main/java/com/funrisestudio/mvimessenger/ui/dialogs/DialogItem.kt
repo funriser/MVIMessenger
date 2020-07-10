@@ -24,34 +24,42 @@ fun DialogListItem(item: DialogViewData, onClick: (DialogViewData) -> Unit) {
                 onClick(item)
             })
             .padding(paddingL),
-        constraintSet = ConstraintSet {
-            val ivAvatar = tag("ivAvatar").apply {
-                left constrainTo parent.left
-                top constrainTo parent.top
-                bottom constrainTo parent.bottom
+        constraintSet = ConstraintSet2 {
+
+            val ivAvatar = createRefFor("ivAvatar")
+            val tvSender = createRefFor("tvSender")
+            val tvLastMessage = createRefFor("tvLastMessage")
+            val tvLastMessageTime = createRefFor("tvLastMessageTime")
+            val tvUnreadCountHolder = createRefFor("tvUnreadCountHolder")
+
+            constrain(ivAvatar) {
+                start.linkTo(parent.start)
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
             }
-            val tvSender = tag("tvSender").apply {
-                left constrainTo ivAvatar.right
-                top constrainTo parent.top
+            constrain(tvSender) {
+                start.linkTo(ivAvatar.end)
+                top.linkTo(parent.top)
             }
-            val tvLastMessage = tag("tvLastMessage").apply {
-                left constrainTo ivAvatar.right
-                bottom constrainTo parent.bottom
+            constrain(tvLastMessage) {
+                start.linkTo(ivAvatar.end)
+                bottom.linkTo(parent.bottom)
             }
-            val tvLastMessageTime = tag("tvLastMessageTime").apply {
-                top constrainTo tvSender.top
-                bottom constrainTo tvSender.bottom
-                right constrainTo parent.right
+            constrain(tvLastMessageTime) {
+                top.linkTo(tvSender.top)
+                bottom.linkTo(tvSender.bottom)
+                end.linkTo(parent.end)
             }
-            val tvUnreadCountHolder = tag("tvUnreadCountHolder").apply {
-                top constrainTo tvLastMessageTime.bottom
-                bottom constrainTo parent.bottom
-                right constrainTo parent.right
+            constrain(tvUnreadCountHolder) {
+                top.linkTo(tvLastMessageTime.bottom)
+                bottom.linkTo(parent.bottom)
+                end.linkTo(parent.end)
             }
+
             createVerticalChain(
                 tvSender,
                 tvLastMessage,
-                chainStyle = ConstraintSetBuilderScope.ChainStyle.Packed
+                chainStyle = ChainStyle.Packed
             )
         }
     ) {

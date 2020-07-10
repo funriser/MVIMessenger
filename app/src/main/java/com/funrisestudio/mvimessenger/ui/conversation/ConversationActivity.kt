@@ -8,10 +8,12 @@ import androidx.activity.viewModels
 import androidx.compose.Composable
 import androidx.ui.core.*
 import androidx.ui.foundation.*
+import androidx.ui.input.TextFieldValue
 import androidx.ui.foundation.shape.corner.CircleShape
 import androidx.ui.graphics.Color
 import androidx.ui.graphics.RectangleShape
 import androidx.ui.layout.*
+import androidx.ui.livedata.observeAsState
 import androidx.ui.material.*
 import androidx.ui.res.imageResource
 import androidx.ui.res.vectorResource
@@ -38,7 +40,7 @@ class ConversationActivity : AppCompatActivity() {
             AppTheme {
                 ConversationScreen(
                     viewStateProvider = {
-                        observe(liveData = conversationViewModel.viewState)
+                        conversationViewModel.viewState.observeAsState().value
                     },
                     onNavigationClick = {
                         onBackPressed()
@@ -142,24 +144,31 @@ fun ConversationToolbar(
 fun ConversationToolbarContent(contact: Contact) {
     ConstraintLayout(
         modifier = Modifier.fillMaxSize(),
-        constraintSet = ConstraintSet {
-            val ivAvatar = tag("ivAvatar").apply {
-                left constrainTo parent.left
-                top constrainTo parent.top
-                bottom constrainTo parent.bottom
+        constraintSet = ConstraintSet2 {
+            val ivAvatar = createRefFor("ivAvatar")
+            val tvSender = createRefFor("tvSender")
+            val tvIsOnline = createRefFor("tvIsOnline")
+
+            constrain(ivAvatar) {
+                start.linkTo(parent.start)
+                top.linkTo(parent.top)
+                bottom.linkTo(parent.bottom)
             }
-            val tvSender = tag("tvSender").apply {
-                left constrainTo ivAvatar.right
-                top constrainTo parent.top
+
+            constrain(tvSender) {
+                start.linkTo(ivAvatar.end)
+                top.linkTo(parent.top)
             }
-            val tvIsOnline = tag("tvIsOnline").apply {
-                left constrainTo ivAvatar.right
-                bottom constrainTo parent.bottom
+
+            constrain(tvIsOnline) {
+                start.linkTo(ivAvatar.end)
+                bottom.linkTo(parent.bottom)
             }
+
             createVerticalChain(
                 tvSender,
                 tvIsOnline,
-                chainStyle = ConstraintSetBuilderScope.ChainStyle.Packed
+                chainStyle = ChainStyle.Packed
             )
         }
     ) {

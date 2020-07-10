@@ -1,6 +1,6 @@
 package com.funrisestudio.mvimessenger.ui.conversation
 
-import androidx.ui.foundation.TextFieldValue
+import androidx.ui.input.TextFieldValue
 import com.funrisestudio.mvimessenger.core.mvi.Reducer
 import javax.inject.Inject
 

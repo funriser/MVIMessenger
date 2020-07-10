@@ -12,6 +12,7 @@ import androidx.ui.foundation.*
 import androidx.ui.layout.Column
 import androidx.ui.layout.Stack
 import androidx.ui.layout.fillMaxSize
+import androidx.ui.livedata.observeAsState
 import androidx.ui.material.CircularProgressIndicator
 import androidx.ui.material.IconButton
 import androidx.ui.material.Scaffold
@@ -26,7 +27,6 @@ import com.funrisestudio.mvimessenger.core.navigation.ToMessages
 import com.funrisestudio.mvimessenger.core.observe
 import com.funrisestudio.mvimessenger.ui.AppTheme
 import com.funrisestudio.mvimessenger.ui.ErrorSnackbar
-import com.funrisestudio.mvimessenger.ui.observe
 import com.funrisestudio.mvimessenger.ui.typography
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -43,7 +43,7 @@ class DialogsActivity : AppCompatActivity() {
             AppTheme {
                 DialogsScreen(
                     viewStateProvider = {
-                        observe(liveData = dialogsViewModel.viewState)
+                        dialogsViewModel.viewState.observeAsState().value
                     },
                     onDialogItemSelected ={
                         dialogsViewModel.onDialogItemSelected(it)
@@ -78,7 +78,7 @@ fun DialogsScreen(
     onDialogItemSelected: OnDialogItemSelected
 ) {
     Scaffold(
-        topAppBar = {
+        topBar = {
             TopAppBar(
                 title = { Text(text = "Messenger") },
                 navigationIcon = {

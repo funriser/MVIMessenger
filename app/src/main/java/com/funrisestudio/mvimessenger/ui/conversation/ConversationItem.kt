@@ -43,14 +43,17 @@ fun ConversationListItem(
                         top = paddingS,
                         bottom = paddingS
                     ),
-                constraintSet = ConstraintSet {
-                    val tvMsg = tag("tvMsg").apply {
-                        left constrainTo parent.left
-                        top constrainTo parent.top
+                constraintSet = ConstraintSet2 {
+                    val tvMsg = createRefFor("tvMsg")
+                    val tvTime = createRefFor("tvTime")
+
+                    constrain(tvMsg) {
+                        start.linkTo(parent.start)
+                        top.linkTo(parent.top)
                     }
-                    val tvTime = tag("tvTime").apply {
-                        top constrainTo tvMsg.bottom
-                        right constrainTo parent.right
+                    constrain(tvTime) {
+                        top.linkTo(tvMsg.bottom)
+                        end.linkTo(parent.end)
                     }
                 }
             ) {
