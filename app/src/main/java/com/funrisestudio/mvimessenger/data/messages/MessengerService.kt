@@ -1,7 +1,7 @@
 package com.funrisestudio.mvimessenger.data.messages
 
-import android.app.Activity
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import com.funrisestudio.mvimessenger.data.contacts
@@ -63,8 +63,8 @@ class MessengerService : Service() {
 
         private const val KEY_SENDER_ID = "sender_id"
 
-        fun getGenerateMessagesIntent(activity: Activity, senderId: Int? = null): Intent {
-            val intent = Intent(activity, MessengerService::class.java)
+        fun getGenerateMessagesIntent(context: Context, senderId: Int? = null): Intent {
+            val intent = Intent(context, MessengerService::class.java)
             if (senderId != null) {
                 intent.putExtra(KEY_SENDER_ID, senderId)
             }

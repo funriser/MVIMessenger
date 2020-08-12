@@ -1,13 +1,16 @@
 package com.funrisestudio.mvimessenger.ui.dialogs
 
 import android.os.Bundle
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.compose.Composable
 import androidx.compose.stateFor
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.ui.core.Alignment
 import androidx.ui.core.Modifier
-import androidx.ui.core.setContent
 import androidx.ui.foundation.*
 import androidx.ui.layout.Column
 import androidx.ui.layout.Stack
@@ -19,7 +22,6 @@ import androidx.ui.material.Scaffold
 import androidx.ui.material.TopAppBar
 import androidx.ui.res.vectorResource
 import androidx.ui.tooling.preview.Preview
-import com.funrisestudio.mvimessenger.data.messages.MessengerService
 import com.funrisestudio.mvimessenger.R
 import com.funrisestudio.mvimessenger.core.navigation.NavAction
 import com.funrisestudio.mvimessenger.core.navigation.Navigator
@@ -28,18 +30,22 @@ import com.funrisestudio.mvimessenger.core.observe
 import com.funrisestudio.mvimessenger.ui.AppTheme
 import com.funrisestudio.mvimessenger.ui.ErrorSnackbar
 import com.funrisestudio.mvimessenger.ui.typography
+import com.funrisestudio.mvimessenger.ui.utils.createComposeView
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class DialogsActivity : AppCompatActivity() {
+class DialogsFragment : Fragment() {
 
     private val dialogsViewModel: DialogsViewModel by viewModels()
     @Inject lateinit var navigator: Navigator<NavAction.DialogNavAction>
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return createComposeView {
             AppTheme {
                 DialogsScreen(
                     viewStateProvider = {
@@ -51,20 +57,17 @@ class DialogsActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initNavigation()
-        initMessaging(savedInstanceState == null)
     }
 
     private fun initNavigation() {
         observe(dialogsViewModel.toMessages) { sender ->
             sender?:return@observe
-            navigator.handleAction(this, ToMessages(sender))
-        }
-    }
-
-    private fun initMessaging(isFirstStarted: Boolean) {
-        if (isFirstStarted) {
-            startService(MessengerService.getGenerateMessagesIntent(this))
+            navigator.handleAction(findNavController(), ToMessages(sender))
         }
     }
 

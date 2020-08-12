@@ -1,11 +1,13 @@
 package com.funrisestudio.mvimessenger.ui.conversation
 
-import android.content.Context
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.activity.viewModels
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.compose.Composable
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.ui.core.*
 import androidx.ui.foundation.*
 import androidx.ui.input.TextFieldValue
@@ -27,23 +29,27 @@ import com.funrisestudio.mvimessenger.data.messages.MessengerService
 import com.funrisestudio.mvimessenger.data.randomMessages
 import com.funrisestudio.mvimessenger.domain.entity.Contact
 import com.funrisestudio.mvimessenger.ui.*
+import com.funrisestudio.mvimessenger.ui.utils.createComposeView
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ConversationActivity : AppCompatActivity() {
+class ConversationFragment : Fragment() {
 
     private val conversationViewModel: ConversationViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return createComposeView {
             AppTheme {
                 ConversationScreen(
                     viewStateProvider = {
                         conversationViewModel.viewState.observeAsState().value
                     },
                     onNavigationClick = {
-                        onBackPressed()
+                        findNavController().popBackStack()
                     },
                     onMessageInputChanged = {
                         conversationViewModel.onMessageInputChanged(it)
@@ -54,21 +60,27 @@ class ConversationActivity : AppCompatActivity() {
                 )
             }
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         initResponseGenerator()
     }
 
     private fun initResponseGenerator() {
         observe(conversationViewModel.generateResponse) { senderId: Int? ->
             senderId?:return@observe
-            startService(MessengerService.getGenerateMessagesIntent(this, senderId))
+            context?.let {
+                it.startService(MessengerService.getGenerateMessagesIntent(it, senderId))
+            }
         }
     }
 
     companion object {
 
-        fun getIntent(context: Context, contact: Contact): Intent {
-            return Intent(context, ConversationActivity::class.java).apply {
-                putExtra(ToMessages.KEY_CONTACT, contact)
+        fun getBundle(contact: Contact): Bundle {
+            return Bundle().apply {
+                putParcelable(ToMessages.KEY_CONTACT, contact)
             }
         }
 

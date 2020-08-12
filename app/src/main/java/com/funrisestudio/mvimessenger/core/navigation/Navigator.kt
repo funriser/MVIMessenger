@@ -1,9 +1,9 @@
 package com.funrisestudio.mvimessenger.core.navigation
 
-import android.content.Context
+import androidx.navigation.NavController
 
 abstract class Navigator<NA: NavAction> {
 
-    abstract fun handleAction(context: Context, action: NA)
+    abstract fun handleAction(controller: NavController, action: NA)
 
 }

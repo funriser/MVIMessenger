@@ -2,6 +2,7 @@ package com.funrisestudio.mvimessenger.utils
 
 import android.app.*
 import android.content.Context
+import android.content.Intent
 import android.graphics.drawable.Icon
 import android.os.Build
 import androidx.lifecycle.Lifecycle
@@ -15,8 +16,8 @@ import com.funrisestudio.mvimessenger.utils.Notifier.Companion.CHANNEL_ID
 import com.funrisestudio.mvimessenger.utils.Notifier.Companion.CHANNEL_NAME
 import com.funrisestudio.mvimessenger.utils.Notifier.Companion.ID
 import com.funrisestudio.mvimessenger.domain.entity.Contact
+import com.funrisestudio.mvimessenger.ui.MessengerActivity
 import com.funrisestudio.mvimessenger.ui.colorPrimary
-import com.funrisestudio.mvimessenger.ui.conversation.ConversationActivity
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.*
 import javax.inject.Inject
@@ -82,7 +83,9 @@ class NotifierImpl @Inject constructor(
     }
 
     private fun createMessengerIntent(contact: Contact): PendingIntent {
-        val target = ConversationActivity.getIntent(context, contact)
+        //TODO("open conversation from there")
+        //val target = ConversationFragment.getIntent(context, contact)
+        val target = Intent(context, MessengerActivity::class.java)
         return PendingIntent.getActivity(context, 0, target,
             PendingIntent.FLAG_UPDATE_CURRENT)
     }

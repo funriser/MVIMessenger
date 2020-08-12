@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
+    app:startDestination="@id/dialogsFragment">
+
+    <fragment
+        android:id="@+id/dialogsFragment"
+        android:name="com.funrisestudio.mvimessenger.ui.dialogs.DialogsFragment"
+        android:label="DialogsFragment" >
+        <action
+            android:id="@+id/toConversation"
+            app:destination="@id/conversationFragment"
+            app:enterAnim="@anim/fragment_open_enter"
+            app:exitAnim="@anim/fragment_close_exit"
+            app:popEnterAnim="@anim/fragment_close_enter"
+            app:popExitAnim="@anim/fragment_open_exit"/>
+    </fragment>
+    <fragment
+        android:id="@+id/conversationFragment"
+        android:name="com.funrisestudio.mvimessenger.ui.conversation.ConversationFragment"
+        android:label="ConversationFragment" >
+        <argument
+            android:name="contact"
+            app:argType="com.funrisestudio.mvimessenger.domain.entity.Contact" />
+    </fragment>
+</navigation>

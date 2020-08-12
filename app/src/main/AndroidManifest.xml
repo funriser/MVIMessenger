@@ -16,8 +16,9 @@
             android:exported="false"/>
 
         <activity
-            android:name="com.funrisestudio.mvimessenger.ui.dialogs.DialogsActivity"
+            android:name=".ui.MessengerActivity"
             android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.MVIMessenger.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,13 +26,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.funrisestudio.mvimessenger.ui.conversation.ConversationActivity"
-            android:allowEmbedded="true"
-            android:label="@string/app_name"
-            android:resizeableActivity="true"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/Theme.MVIMessenger.NoActionBar"/>
+
     </application>
 
 </manifest>
