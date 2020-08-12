@@ -28,43 +28,42 @@ class ConversationViewModel @ViewModelInject constructor(
     val generateResponse: LiveData<Int> = _generateResponse
 
     init {
-        store.wire(viewModelScope)
         store.observeViewState()
             .distinctUntilChanged()
             .onEach {
                 _viewState.value = it
             }
             .launchIn(viewModelScope)
-        store.processAction(ConversationAction.ContactReceived(contact))
-        store.processAction(ConversationAction.LoadConversation(contact.id))
+        store.process(ConversationAction.ContactReceived(contact))
+        store.process(ConversationAction.LoadConversation(contact.id))
         initMessageReader()
     }
 
     //mark all received messages as read and send messages in response
     private fun initMessageReader() {
-        store.interceptActions()
-            .onEach {
-                when(it) {
-                    is ConversationAction.ConversationReceived -> {
-                        store.processAction(ConversationAction.MarkAsRead(contact.id))
-                    }
-                    is ConversationAction.MessageSent -> {
-                        _generateResponse.value = contact.id
-                    }
-                    else -> {}
-                }
+        store.onEachAction = ::onNewAction
+    }
+
+    private fun onNewAction(action: ConversationAction) {
+        when(action) {
+            is ConversationAction.ConversationReceived -> {
+                store.process(ConversationAction.MarkAsRead(contact.id))
             }
-            .launchIn(viewModelScope)
+            is ConversationAction.MessageSent -> {
+                _generateResponse.value = contact.id
+            }
+            else -> {}
+        }
     }
 
     fun onMessageInputChanged(newInput: TextFieldValue) {
-        store.processAction(ConversationAction.MessageInputChanged(newInput))
+        store.process(ConversationAction.MessageInputChanged(newInput))
     }
 
     fun onSendMessage() {
         val currState = _viewState.value?:return
         val action = ConversationAction.SendMessage(contact.id, currState.messageInput.text)
-        store.processAction(action)
+        store.process(action)
     }
 
 }

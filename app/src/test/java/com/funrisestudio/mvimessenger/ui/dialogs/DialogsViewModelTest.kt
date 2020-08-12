@@ -32,9 +32,8 @@ class DialogsViewModelTest: ViewModelTest() {
         val actualViewState = viewModel.viewState.awaitValue()
 
         assertEquals(initialState, actualViewState)
-        verify(store).wire(any())
         verify(store).observeViewState()
-        verify(store).processAction(DialogsAction.LoadDialogs)
+        verify(store).process(DialogsAction.LoadDialogs)
         verifyNoMoreInteractions(store)
     }
 

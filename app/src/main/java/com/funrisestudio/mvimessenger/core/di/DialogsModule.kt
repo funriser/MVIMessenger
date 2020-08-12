@@ -1,9 +1,6 @@
 package com.funrisestudio.mvimessenger.core.di
 
-import com.funrisestudio.mvimessenger.core.mvi.DefaultStore
-import com.funrisestudio.mvimessenger.core.mvi.MiddleWare
-import com.funrisestudio.mvimessenger.core.mvi.Reducer
-import com.funrisestudio.mvimessenger.core.mvi.Store
+import com.funrisestudio.mvimessenger.core.mvi.*
 import com.funrisestudio.mvimessenger.core.navigation.NavAction
 import com.funrisestudio.mvimessenger.core.navigation.Navigator
 import com.funrisestudio.mvimessenger.domain.dialogs.DialogsRepository
@@ -29,7 +26,7 @@ interface IDialogsModule {
 
     @Binds
     fun store(
-        defaultStore: DefaultStore<DialogsAction, DialogsViewState>
+        simpleStore: SimpleStore<DialogsAction, DialogsViewState>
     ): Store<DialogsAction, DialogsViewState>
 
     @Binds

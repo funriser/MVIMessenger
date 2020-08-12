@@ -5,10 +5,9 @@ import com.funrisestudio.mvimessenger.ui.conversation.ConversationAction
 import com.funrisestudio.mvimessenger.ui.conversation.ConversationViewState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flatMapMerge
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -17,13 +16,16 @@ class ConversationMiddleware @Inject constructor(
     private val getConversationUseCase: GetConversationUseCase,
     private val sendMessageUseCase: SendMessageUseCase,
     private val markAsReadUseCase: MarkAsReadUseCase
-): MiddleWare<ConversationAction, ConversationViewState>() {
+): MiddleWare<ConversationAction, ConversationViewState> {
 
-    override fun bind(actionStream: Flow<ConversationAction>): Flow<ConversationAction> {
-        return actionStream
-            .filter {
-                isHandled(it)
-            }
+    private val allActions = BroadcastChannel<ConversationAction>(Channel.BUFFERED)
+
+    override fun process(action: ConversationAction) {
+        allActions.offer(action)
+    }
+
+    override fun getProcessedActions(): Flow<ConversationAction> {
+        return allActions.asFlow()
             .flatMapMerge {
                 when(it) {
                     is ConversationAction.LoadConversation -> {
@@ -32,19 +34,14 @@ class ConversationMiddleware @Inject constructor(
                     }
                     is ConversationAction.SendMessage -> {
                         sendMessageUseCase.getFlow(it)
+                            .onStart { emit(it) }
                     }
                     is ConversationAction.MarkAsRead -> {
                         markAsReadUseCase.getFlow(it)
                     }
-                    else -> throw IllegalStateException("Action is not supported")
+                    else -> flow { emit(it) }
                 }
             }
-    }
-
-    private fun isHandled(action: ConversationAction): Boolean {
-        return action is ConversationAction.LoadConversation ||
-                action is ConversationAction.SendMessage ||
-                action is ConversationAction.MarkAsRead
     }
 
 }

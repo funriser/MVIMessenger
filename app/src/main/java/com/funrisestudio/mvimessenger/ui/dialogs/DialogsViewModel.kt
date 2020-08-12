@@ -20,14 +20,13 @@ class DialogsViewModel @ViewModelInject constructor(
     val toMessages: LiveData<Contact> = _toMessages
 
     init {
-        store.wire(viewModelScope)
         store.observeViewState()
             .distinctUntilChanged()
             .onEach {
                 _viewState.value = it
             }
             .launchIn(viewModelScope)
-        store.processAction(DialogsAction.LoadDialogs)
+        store.process(DialogsAction.LoadDialogs)
     }
 
     fun onDialogItemSelected(item: DialogViewData) {

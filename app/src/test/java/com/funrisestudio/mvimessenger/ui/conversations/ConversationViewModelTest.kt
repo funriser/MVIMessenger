@@ -1,7 +1,7 @@
 package com.funrisestudio.mvimessenger.ui.conversations
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.ui.foundation.TextFieldValue
+import androidx.ui.input.TextFieldValue
 import com.funrisestudio.mvimessenger.core.mvi.Store
 import com.funrisestudio.mvimessenger.core.navigation.ToMessages
 import com.funrisestudio.mvimessenger.domain.TestData
@@ -13,6 +13,7 @@ import com.funrisestudio.mvimessenger.utils.awaitValue
 import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -35,14 +36,12 @@ class ConversationViewModelTest: ViewModelTest() {
             emit(initialState)
         }
         whenever(store.observeViewState()).thenReturn(mockedStateFlow)
-        whenever(store.interceptActions()).thenReturn(flow {  })
 
         viewModel = ConversationViewModel(savedStateHandle, store)
 
         val actualViewState = viewModel.viewState.awaitValue()
 
         assertEquals(initialState, actualViewState)
-        verify(store).wire(any())
         verify(store).observeViewState()
     }
 
@@ -53,52 +52,43 @@ class ConversationViewModelTest: ViewModelTest() {
             emit(initialState)
         }
         whenever(store.observeViewState()).thenReturn(mockedStateFlow)
-        whenever(store.interceptActions()).thenReturn(flow {  })
 
         viewModel = ConversationViewModel(savedStateHandle, store)
 
-        verify(store).processAction(ConversationAction.ContactReceived(contact))
-        verify(store).processAction(ConversationAction.LoadConversation(contact.id))
+        verify(store).process(ConversationAction.ContactReceived(contact))
+        verify(store).process(ConversationAction.LoadConversation(contact.id))
     }
 
     @Test
     fun `should launch mark as read action after conversation received`() {
+        val store: StubStore = spy()
         val initialState = ConversationViewState.createEmpty()
         val mockedStateFlow = flow {
             emit(initialState)
         }
         whenever(store.observeViewState()).thenReturn(mockedStateFlow)
 
-        val mockedActionsFlow = flow {
-            emit(ConversationAction.ConversationReceived(emptyList()))
-        }
-        whenever(store.interceptActions()).thenReturn(mockedActionsFlow)
-
         viewModel = ConversationViewModel(savedStateHandle, store)
+        store.onEachAction?.invoke(ConversationAction.ConversationReceived(emptyList()))
 
         //wait until mocked action is processed
         Thread.sleep(100)
-
-        verify(store).processAction(ConversationAction.MarkAsRead(contact.id))
+        verify(store).process(ConversationAction.MarkAsRead(contact.id))
     }
 
     @Test
     fun `should update generate response live date after new message sent`() {
+        val store: StubStore = spy()
         val initialState = ConversationViewState.createEmpty()
         val mockedStateFlow = flow {
             emit(initialState)
         }
         whenever(store.observeViewState()).thenReturn(mockedStateFlow)
 
-        val mockedActionsFlow = flow {
-            emit(ConversationAction.MessageSent)
-        }
-        whenever(store.interceptActions()).thenReturn(mockedActionsFlow)
-
         viewModel = ConversationViewModel(savedStateHandle, store)
+        store.onEachAction?.invoke(ConversationAction.MessageSent)
 
         val actualCommand = viewModel.generateResponse.awaitValue()
-
         assertEquals(contact.id, actualCommand)
     }
 
@@ -111,13 +101,12 @@ class ConversationViewModelTest: ViewModelTest() {
             emit(initialState)
         }
         whenever(store.observeViewState()).thenReturn(mockedStateFlow)
-        whenever(store.interceptActions()).thenReturn(flow {  })
 
         viewModel = ConversationViewModel(savedStateHandle, store)
 
         viewModel.onMessageInputChanged(mockedNewInput)
 
-        verify(store).processAction(ConversationAction.MessageInputChanged(mockedNewInput))
+        verify(store).process(ConversationAction.MessageInputChanged(mockedNewInput))
     }
 
     @Test
@@ -133,7 +122,6 @@ class ConversationViewModelTest: ViewModelTest() {
             emit(initialState)
         }
         whenever(store.observeViewState()).thenReturn(mockedStateFlow)
-        whenever(store.interceptActions()).thenReturn(flow {  })
 
         viewModel = ConversationViewModel(savedStateHandle, store)
 
@@ -142,7 +130,20 @@ class ConversationViewModelTest: ViewModelTest() {
 
         viewModel.onSendMessage()
 
-        verify(store).processAction(ConversationAction.SendMessage(contact.id, mockedInput.text))
+        verify(store).process(ConversationAction.SendMessage(contact.id, mockedInput.text))
+    }
+
+    open class StubStore: Store<ConversationAction, ConversationViewState> {
+        override var onEachAction: ((ConversationAction) -> Unit)? = null
+
+        override fun process(action: ConversationAction) {
+
+        }
+
+        override fun observeViewState(): Flow<ConversationViewState> {
+            return flow {  }
+        }
+
     }
 
 }

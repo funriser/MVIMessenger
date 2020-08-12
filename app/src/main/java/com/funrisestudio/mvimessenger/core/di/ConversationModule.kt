@@ -22,7 +22,7 @@ interface IConversationModule {
 
     @Binds
     fun store(
-        store: DefaultStore<ConversationAction, ConversationViewState>
+        store: SimpleStore<ConversationAction, ConversationViewState>
     ): Store<ConversationAction, ConversationViewState>
 
     @Binds

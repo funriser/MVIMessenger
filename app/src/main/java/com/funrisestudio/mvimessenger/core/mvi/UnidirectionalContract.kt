@@ -1,12 +1,6 @@
 package com.funrisestudio.mvimessenger.core.mvi
 
-import com.funrisestudio.mvimessenger.core.withLatestFrom
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -15,89 +9,54 @@ interface ViewState
 
 interface Action
 
-abstract class MiddleWare<A : Action, V : ViewState> {
-    abstract fun bind(actionStream: Flow<A>): Flow<A>
+interface MiddleWare<A : Action, V : ViewState> {
+
+    fun process(action: A)
+
+    fun getProcessedActions(): Flow<A>
+
 }
 
 interface Store<A : Action, V : ViewState> {
 
-    /**
-     * bind all actions with middleware
-     */
-    fun wire(scope: CoroutineScope)
+    var onEachAction: ((A) -> Unit)?
 
-    fun processAction(action: A)
+    fun process(action: A)
 
     fun observeViewState(): Flow<V>
 
-    fun interceptActions(): Flow<A>
 }
 
-@FlowPreview
 @ExperimentalCoroutinesApi
-class DefaultStore<A : Action, V : ViewState> @Inject constructor(
+class SimpleStore<A : Action, V : ViewState> @Inject constructor(
     private val reducer: Reducer<A, V>,
     private val middleWare: MiddleWare<A, V>,
     initialState: V
 ) : Store<A, V> {
 
-    private val allActions = BroadcastChannel<A>(Channel.BUFFERED)
-    private val states = ConflatedBroadcastChannel(initialState)
+    private var lastState = initialState
 
-    override fun wire(scope: CoroutineScope) {
-        middleWare.bind(allActions.asFlow())
-            .onEach {
-                allActions.offer(it)
-            }
-            .launchIn(scope)
-        allActions.asFlow()
-            .withLatestFrom(states.asFlow()) { action, states ->
-                reducer.reduce(states, action)
-            }
-            .onEach {
-                states.offer(it)
-            }
-            .launchIn(scope)
+    override var onEachAction: ((A) -> Unit)? = null
+
+    override fun process(action: A) {
+        middleWare.process(action)
     }
 
-    override fun processAction(action: A) {
-        allActions.offer(action)
-    }
-
-    override fun observeViewState(): Flow<V> = states.asFlow().buffer()
-
-    override fun interceptActions(): Flow<A> = allActions.asFlow().buffer()
-
-}
-
-@FlowPreview
-@ExperimentalCoroutinesApi
-class PresentationStore<A : Action, V : ViewState> @Inject constructor(
-    private val reducer: Reducer<A, V>,
-    initialState: V
-) : Store<A, V> {
-
-    private val allActions = BroadcastChannel<A>(Channel.BUFFERED)
-    private val states = ConflatedBroadcastChannel(initialState)
-
-    override fun wire(scope: CoroutineScope) {
-        allActions.asFlow()
-            .withLatestFrom(states.asFlow()) { action, states ->
-                reducer.reduce(states, action)
+    override fun observeViewState(): Flow<V> {
+        return middleWare.getProcessedActions()
+            .onEach {
+                onEachAction?.invoke(it)
+            }
+            .map {
+                reducer.reduce(lastState, it)
             }
             .onEach {
-                states.offer(it)
+                lastState = it
             }
-            .launchIn(scope)
+            .onStart {
+                emit(lastState)
+            }
     }
-
-    override fun processAction(action: A) {
-        allActions.offer(action)
-    }
-
-    override fun observeViewState(): Flow<V> = states.asFlow().buffer()
-
-    override fun interceptActions(): Flow<A> = allActions.asFlow().buffer()
 
 }
 
