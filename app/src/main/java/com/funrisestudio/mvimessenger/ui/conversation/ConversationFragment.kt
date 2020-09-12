@@ -4,23 +4,27 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.Composable
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.IconButton
+import androidx.compose.material.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.ui.core.*
-import androidx.ui.foundation.*
-import androidx.ui.input.TextFieldValue
-import androidx.ui.foundation.shape.corner.CircleShape
-import androidx.ui.graphics.Color
-import androidx.ui.graphics.RectangleShape
-import androidx.ui.layout.*
-import androidx.ui.livedata.observeAsState
-import androidx.ui.material.*
-import androidx.ui.res.imageResource
-import androidx.ui.res.vectorResource
 import androidx.ui.tooling.preview.Preview
-import androidx.ui.unit.dp
 import com.funrisestudio.mvimessenger.R
 import com.funrisestudio.mvimessenger.core.navigation.ToMessages
 import com.funrisestudio.mvimessenger.core.observe
@@ -37,6 +41,7 @@ class ConversationFragment : Fragment() {
 
     private val conversationViewModel: ConversationViewModel by viewModels()
 
+    @ExperimentalFoundationApi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -88,6 +93,7 @@ class ConversationFragment : Fragment() {
 
 }
 
+@ExperimentalFoundationApi
 @Composable
 fun ConversationScreen(
     viewStateProvider: @Composable() () -> ConversationViewState?,
@@ -156,7 +162,7 @@ fun ConversationToolbar(
 fun ConversationToolbarContent(contact: Contact) {
     ConstraintLayout(
         modifier = Modifier.fillMaxSize(),
-        constraintSet = ConstraintSet2 {
+        constraintSet = ConstraintSet {
             val ivAvatar = createRefFor("ivAvatar")
             val tvSender = createRefFor("tvSender")
             val tvIsOnline = createRefFor("tvIsOnline")
@@ -187,21 +193,21 @@ fun ConversationToolbarContent(contact: Contact) {
         Image(
             asset = imageResource(contact.avatar),
             modifier = Modifier
-                .tag("ivAvatar")
+                .layoutId("ivAvatar")
                 .size(40.dp)
                 .clip(shape = CircleShape)
         )
         Text(
             text = contact.name,
             modifier = Modifier
-                .tag("tvSender")
+                .layoutId("tvSender")
                 .padding(start = paddingL),
             style = typography.body1.copy(color = Color.White)
         )
         Text(
             text = "Online",
             modifier = Modifier
-                .tag("tvIsOnline")
+                .layoutId("tvIsOnline")
                 .padding(start = paddingL),
             style = typography.caption.copy(color = Color.White)
         )
@@ -219,10 +225,10 @@ fun ConversationBody(
         gravity = ContentGravity.BottomStart
     ) {
         if (viewState.messages.isNotEmpty()) {
-            VerticalScroller(
+            ScrollableColumn(
                 modifier = Modifier
                     .padding(paddingXL),
-                scrollerPosition = ScrollerPosition(isReversed = true)
+                reverseScrollDirection = true
             ) {
                 Column {
                     viewState.messages.forEachIndexed { i, msg ->
@@ -239,6 +245,7 @@ fun ConversationBody(
     }
 }
 
+@ExperimentalFoundationApi
 @Composable
 fun ConversationFooter(
     viewState: ConversationViewState,
@@ -283,6 +290,7 @@ fun ConversationFooter(
     }
 }
 
+@ExperimentalFoundationApi
 @Preview(showBackground = true)
 @Composable
 fun MessengerPreview() {

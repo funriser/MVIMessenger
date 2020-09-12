@@ -1,22 +1,25 @@
 package com.funrisestudio.mvimessenger.ui
 
-import androidx.compose.Composable
-import androidx.compose.onActive
-import androidx.ui.core.ContextAmbient
-import androidx.ui.core.Modifier
-import androidx.ui.foundation.*
-import androidx.ui.input.TextFieldValue
-import androidx.ui.graphics.Color
-import androidx.ui.layout.Stack
-import androidx.ui.layout.padding
-import androidx.ui.layout.preferredSize
-import androidx.ui.material.Snackbar
-import androidx.ui.material.TextButton
-import androidx.ui.material.ripple.RippleIndication
-import androidx.ui.text.TextStyle
-import androidx.ui.unit.dp
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.Stack
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.preferredSize
+import androidx.compose.material.Snackbar
+import androidx.compose.material.TextButton
+import androidx.compose.material.ripple.RippleIndication
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.onActive
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.ContextAmbient
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import com.funrisestudio.mvimessenger.R
-import kotlinx.coroutines.*
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun ErrorSnackbar(
@@ -60,6 +63,7 @@ fun ErrorSnackbar(
     }
 }
 
+@ExperimentalFoundationApi
 @Composable
 fun HintTextField(
     modifier: Modifier,
@@ -73,7 +77,7 @@ fun HintTextField(
     Stack(
         modifier = modifier
     ) {
-        TextField(
+        BaseTextField(
             value = textValue,
             onValueChange = { onTextChanged?.invoke(it) },
             textStyle = textStyle,

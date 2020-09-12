@@ -1,6 +1,6 @@
 package com.funrisestudio.mvimessenger.ui
 
-import androidx.ui.unit.dp
+import androidx.compose.ui.unit.dp
 
 
 val paddingXS = 2.dp

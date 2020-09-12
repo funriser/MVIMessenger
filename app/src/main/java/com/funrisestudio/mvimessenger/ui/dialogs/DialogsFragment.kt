@@ -4,23 +4,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.Composable
-import androidx.compose.stateFor
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Stack
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.IconButton
+import androidx.compose.material.Scaffold
+import androidx.compose.material.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.stateFor
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.vectorResource
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.ui.core.Alignment
-import androidx.ui.core.Modifier
-import androidx.ui.foundation.*
-import androidx.ui.layout.Column
-import androidx.ui.layout.Stack
-import androidx.ui.layout.fillMaxSize
-import androidx.ui.livedata.observeAsState
-import androidx.ui.material.CircularProgressIndicator
-import androidx.ui.material.IconButton
-import androidx.ui.material.Scaffold
-import androidx.ui.material.TopAppBar
-import androidx.ui.res.vectorResource
 import androidx.ui.tooling.preview.Preview
 import com.funrisestudio.mvimessenger.R
 import com.funrisestudio.mvimessenger.core.navigation.NavAction
@@ -159,7 +159,7 @@ fun DialogsScreenBody(
     items: List<DialogViewData>,
     onDialogItemSelected: OnDialogItemSelected
 ) {
-    VerticalScroller(modifier = Modifier.fillMaxSize()) {
+    ScrollableColumn(modifier = Modifier.fillMaxSize()) {
         Column {
             items.forEach {
                 DialogListItem(item = it, onClick = onDialogItemSelected)

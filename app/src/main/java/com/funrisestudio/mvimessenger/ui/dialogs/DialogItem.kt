@@ -1,16 +1,16 @@
 package com.funrisestudio.mvimessenger.ui.dialogs
 
-import androidx.compose.Composable
-import androidx.ui.core.Modifier
-import androidx.ui.core.clip
-import androidx.ui.core.tag
-import androidx.ui.foundation.*
-import androidx.ui.foundation.shape.corner.CircleShape
-import androidx.ui.graphics.Color
-import androidx.ui.layout.*
-import androidx.ui.res.imageResource
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
-import androidx.ui.unit.dp
 import com.funrisestudio.mvimessenger.ui.*
 
 @Composable
@@ -24,7 +24,7 @@ fun DialogListItem(item: DialogViewData, onClick: (DialogViewData) -> Unit) {
                 onClick(item)
             })
             .padding(paddingL),
-        constraintSet = ConstraintSet2 {
+        constraintSet = ConstraintSet {
 
             val ivAvatar = createRefFor("ivAvatar")
             val tvSender = createRefFor("tvSender")
@@ -66,28 +66,28 @@ fun DialogListItem(item: DialogViewData, onClick: (DialogViewData) -> Unit) {
         Image(
             asset = avatarAsset,
             modifier = Modifier
-                .tag("ivAvatar")
+                .layoutId("ivAvatar")
                 .size(48.dp)
                 .clip(shape = CircleShape)
         )
         Text(
             text = dgData.contact.name,
             modifier = Modifier
-                .tag("tvSender")
+                .layoutId("tvSender")
                 .padding(start = paddingL),
             style = typography.body1
         )
         Text(
             text = dgData.lastMessage.text,
             modifier = Modifier
-                .tag("tvLastMessage")
+                .layoutId("tvLastMessage")
                 .padding(start = paddingL, top = paddingS),
             style = typography.body2
         )
         Text(
             text = item.formattedDate,
             modifier = Modifier
-                .tag("tvLastMessageTime"),
+                .layoutId("tvLastMessageTime"),
             style = typography.caption
         )
         if (dgData.unreadCount != 0) {
@@ -95,7 +95,7 @@ fun DialogListItem(item: DialogViewData, onClick: (DialogViewData) -> Unit) {
                 shape = CircleShape,
                 backgroundColor = colorAccent,
                 modifier = Modifier
-                    .tag("tvUnreadCountHolder")
+                    .layoutId("tvUnreadCountHolder")
                     .size(24.dp),
                 gravity = ContentGravity.Center
             ) {
@@ -106,7 +106,7 @@ fun DialogListItem(item: DialogViewData, onClick: (DialogViewData) -> Unit) {
             }
         } else {
             //empty view
-            Column(modifier = Modifier.tag("tvUnreadCountHolder")) {}
+            Column(modifier = Modifier.layoutId("tvUnreadCountHolder")) {}
         }
     }
 }

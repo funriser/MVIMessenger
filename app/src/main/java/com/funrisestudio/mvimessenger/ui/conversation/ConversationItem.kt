@@ -1,17 +1,17 @@
 package com.funrisestudio.mvimessenger.ui.conversation
 
-import androidx.compose.Composable
-import androidx.ui.core.Modifier
-import androidx.ui.core.tag
-import androidx.ui.foundation.Box
-import androidx.ui.foundation.ContentGravity
-import androidx.ui.foundation.Text
-import androidx.ui.foundation.shape.corner.RoundedCornerShape
-import androidx.ui.graphics.Color
-import androidx.ui.layout.*
-import androidx.ui.material.Surface
-import androidx.ui.unit.Dp
-import androidx.ui.unit.dp
+import androidx.compose.foundation.Box
+import androidx.compose.foundation.ContentGravity
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.funrisestudio.mvimessenger.ui.*
 
 @Composable
@@ -43,7 +43,7 @@ fun ConversationListItem(
                         top = paddingS,
                         bottom = paddingS
                     ),
-                constraintSet = ConstraintSet2 {
+                constraintSet = ConstraintSet {
                     val tvMsg = createRefFor("tvMsg")
                     val tvTime = createRefFor("tvTime")
 
@@ -60,13 +60,13 @@ fun ConversationListItem(
                 Text(
                     text = item.message.text,
                     modifier = Modifier
-                        .tag("tvMsg"),
+                        .layoutId("tvMsg"),
                     style = typography.body2.copy(color = Color.White)
                 )
                 Text(
                     text = item.formattedDate,
                     modifier = Modifier
-                        .tag("tvTime"),
+                        .layoutId("tvTime"),
                     style = typography.caption
                 )
             }

@@ -1,9 +1,9 @@
 package com.funrisestudio.mvimessenger.ui.conversation
 
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import androidx.ui.input.TextFieldValue
 import com.funrisestudio.mvimessenger.core.SingleLiveEvent
 import com.funrisestudio.mvimessenger.core.mvi.Store
 import com.funrisestudio.mvimessenger.core.navigation.ToMessages
