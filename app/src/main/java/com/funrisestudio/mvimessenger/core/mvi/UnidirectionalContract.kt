@@ -47,14 +47,11 @@ class SimpleStore<A : Action, V : ViewState> @Inject constructor(
             .onEach {
                 onEachAction?.invoke(it)
             }
-            .map {
-                reducer.reduce(lastState, it)
+            .scan(lastState) { acc, value ->
+                reducer.reduce(acc, value)
             }
             .onEach {
                 lastState = it
-            }
-            .onStart {
-                emit(lastState)
             }
     }
 

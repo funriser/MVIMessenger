@@ -1,7 +1,7 @@
 package com.funrisestudio.mvimessenger.ui.conversations
 
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.SavedStateHandle
-import androidx.ui.input.TextFieldValue
 import com.funrisestudio.mvimessenger.core.mvi.Store
 import com.funrisestudio.mvimessenger.core.navigation.ToMessages
 import com.funrisestudio.mvimessenger.domain.TestData
