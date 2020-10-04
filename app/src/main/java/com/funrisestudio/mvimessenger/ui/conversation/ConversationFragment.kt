@@ -143,13 +143,14 @@ fun ConversationToolbar(
                         modifier = Modifier
                             .fillMaxHeight()
                             .preferredWidth(AppBarIconWidth),
-                        verticalGravity = ContentGravity.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         navigationIcon()
                     }
                 }
                 Box(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    alignment = Alignment.TopStart
                 ) {
                     content()
                 }
@@ -222,7 +223,7 @@ fun ConversationBody(
     Box(
         modifier = modifier
             .fillMaxWidth(),
-        gravity = ContentGravity.BottomStart
+        alignment = Alignment.BottomStart
     ) {
         if (viewState.messages.isNotEmpty()) {
             ScrollableColumn(
@@ -260,7 +261,7 @@ fun ConversationFooter(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(messageBoxHeight),
-            verticalGravity = Alignment.CenterVertically
+            verticalAlignment = Alignment.CenterVertically
         ) {
             HintTextField(
                 modifier = Modifier

@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.*
+import androidx.compose.foundation.Icon
+import androidx.compose.foundation.ScrollableColumn
+import androidx.compose.foundation.Text
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Stack
 import androidx.compose.foundation.layout.fillMaxSize
@@ -105,7 +108,7 @@ fun DialogsContent(
     if (viewState.hasNoDialogs || viewState.isLoading) {
         Box(
             modifier = Modifier.fillMaxSize(),
-            gravity = ContentGravity.Center
+            alignment = Alignment.Center
         ) {
             if (viewState.isLoading) {
                 CircularProgressIndicator()

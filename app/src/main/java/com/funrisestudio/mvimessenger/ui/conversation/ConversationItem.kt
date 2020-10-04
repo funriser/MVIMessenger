@@ -1,12 +1,11 @@
 package com.funrisestudio.mvimessenger.ui.conversation
 
-import androidx.compose.foundation.Box
-import androidx.compose.foundation.ContentGravity
 import androidx.compose.foundation.Text
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
@@ -19,21 +18,21 @@ fun ConversationListItem(
     item: MessageViewData,
     paddingTop: Dp
 ) {
-    val (gravity, color) = if (item.message.isReceived) {
-        ContentGravity.CenterStart to colorPrimaryDark
+    val (alignment, color) = if (item.message.isReceived) {
+        Alignment.CenterStart to colorPrimaryDark
     } else {
-        ContentGravity.CenterEnd to colorPrimary
+        Alignment.CenterEnd to colorPrimary
     }
     Box(
         modifier = Modifier.fillMaxWidth(),
-        gravity = gravity
+        alignment = alignment
     ) {
         Surface(
             color = color,
             shape = RoundedCornerShape(cornerSize),
             modifier = Modifier
                 .padding(top = paddingTop)
-                .widthIn(minWidth = 60.dp)
+                .widthIn(min = 60.dp)
         ) {
             ConstraintLayout(
                 modifier = Modifier
