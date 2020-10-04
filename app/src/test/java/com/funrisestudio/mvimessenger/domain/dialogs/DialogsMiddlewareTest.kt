@@ -27,6 +27,9 @@ class DialogsMiddlewareTest {
     @Test
     fun `should handle load dialogs action`() = runBlockingTest {
         //Arrange
+        val actionsInputFlow = flow<DialogsAction> {
+            emit(DialogsAction.LoadDialogs)
+        }
         val mockedDialogs = TestData.getMockedDialogs()
         val dialogsFlow = flow {
             emit(DialogsAction.DialogsLoaded(mockedDialogs))
@@ -34,13 +37,12 @@ class DialogsMiddlewareTest {
         whenever(getDialogsUseCase.getFlow(Unit)).thenReturn(dialogsFlow)
         //Act
         val output = mutableListOf<DialogsAction>()
-        dialogsMiddleware.getProcessedActions()
+        dialogsMiddleware.bind(actionsInputFlow)
             .take(2)
             .onEach {
                 output.add(it)
             }
             .launchIn(this)
-        dialogsMiddleware.process(DialogsAction.LoadDialogs)
         //Assert
         assertTrue(output.contains(DialogsAction.DialogsLoaded(mockedDialogs)))
         verify(getDialogsUseCase).getFlow(Unit)
@@ -50,6 +52,9 @@ class DialogsMiddlewareTest {
     @Test
     fun `should emit dialogs loading action`() = runBlockingTest {
         //Arrange
+        val actionsInputFlow = flow<DialogsAction> {
+            emit(DialogsAction.LoadDialogs)
+        }
         val mockedDialogs = TestData.getMockedDialogs()
         val dialogsFlow = flow {
             emit(DialogsAction.DialogsLoaded(mockedDialogs))
@@ -57,13 +62,12 @@ class DialogsMiddlewareTest {
         whenever(getDialogsUseCase.getFlow(Unit)).thenReturn(dialogsFlow)
         //Act
         val output = mutableListOf<DialogsAction>()
-        dialogsMiddleware.getProcessedActions()
+        dialogsMiddleware.bind(actionsInputFlow)
             .take(2)
             .onEach {
                 output.add(it)
             }
             .launchIn(this)
-        dialogsMiddleware.process(DialogsAction.LoadDialogs)
         //Assert
         assertTrue(output.contains(DialogsAction.Loading))
         verify(getDialogsUseCase).getFlow(Unit)
@@ -73,18 +77,13 @@ class DialogsMiddlewareTest {
     @Test
     fun `should emit unsupported actions`() = runBlockingTest {
         //Arrange
-        val unsupportedAction = DialogsAction.DialogsError(IllegalStateException())
+        val actionsInputFlow = flow<DialogsAction> {
+            emit(DialogsAction.DialogsError(IllegalStateException()))
+        }
         //Act
-        val output = mutableListOf<DialogsAction>()
-        dialogsMiddleware.getProcessedActions()
-            .take(1)
-            .onEach {
-                output.add(it)
-            }
-            .launchIn(this)
-        dialogsMiddleware.process(unsupportedAction)
+        val actual = dialogsMiddleware.bind(actionsInputFlow).toList()
         //Assert
-        assertEquals(output, listOf(unsupportedAction))
+        assertEquals(emptyList<DialogsAction>(), actual)
         verifyZeroInteractions(getDialogsUseCase)
     }
 

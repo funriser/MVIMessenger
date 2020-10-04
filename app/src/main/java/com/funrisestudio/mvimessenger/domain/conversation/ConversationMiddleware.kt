@@ -5,8 +5,6 @@ import com.funrisestudio.mvimessenger.ui.conversation.ConversationAction
 import com.funrisestudio.mvimessenger.ui.conversation.ConversationViewState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -18,14 +16,8 @@ class ConversationMiddleware @Inject constructor(
     private val markAsReadUseCase: MarkAsReadUseCase
 ): MiddleWare<ConversationAction, ConversationViewState> {
 
-    private val allActions = BroadcastChannel<ConversationAction>(Channel.BUFFERED)
-
-    override fun process(action: ConversationAction) {
-        allActions.offer(action)
-    }
-
-    override fun getProcessedActions(): Flow<ConversationAction> {
-        return allActions.asFlow()
+    override fun bind(actions: Flow<ConversationAction>): Flow<ConversationAction> {
+        return actions
             .flatMapMerge {
                 when(it) {
                     is ConversationAction.LoadConversation -> {
@@ -34,12 +26,11 @@ class ConversationMiddleware @Inject constructor(
                     }
                     is ConversationAction.SendMessage -> {
                         sendMessageUseCase.getFlow(it)
-                            .onStart { emit(it) }
                     }
                     is ConversationAction.MarkAsRead -> {
                         markAsReadUseCase.getFlow(it)
                     }
-                    else -> flow { emit(it) }
+                    else -> emptyFlow()
                 }
             }
     }

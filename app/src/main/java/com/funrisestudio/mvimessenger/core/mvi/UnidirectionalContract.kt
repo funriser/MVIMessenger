@@ -1,6 +1,8 @@
 package com.funrisestudio.mvimessenger.core.mvi
 
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.BroadcastChannel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -9,11 +11,9 @@ interface ViewState
 
 interface Action
 
-interface MiddleWare<A : Action, V : ViewState> {
+interface MiddleWare<A : Action, S : ViewState> {
 
-    fun process(action: A)
-
-    fun getProcessedActions(): Flow<A>
+    fun bind(actions: Flow<A>): Flow<A>
 
 }
 
@@ -30,33 +30,33 @@ interface Store<A : Action, V : ViewState> {
 @ExperimentalCoroutinesApi
 class SimpleStore<A : Action, V : ViewState> @Inject constructor(
     private val reducer: Reducer<A, V>,
-    private val middleWare: MiddleWare<A, V>,
-    initialState: V
+    middleWare: MiddleWare<A, V>,
+    private val initialState: V
 ) : Store<A, V> {
 
-    private var lastState = initialState
+    private val actionsBroadcast = BroadcastChannel<A>(Channel.BUFFERED)
+    private val actionsFlow
+        get() = actionsBroadcast.asFlow()
+    private val middlewareActionsFlow = middleWare.bind(actionsFlow)
 
     override var onEachAction: ((A) -> Unit)? = null
 
     override fun process(action: A) {
-        middleWare.process(action)
+        actionsBroadcast.offer(action)
     }
 
     override fun observeViewState(): Flow<V> {
-        return middleWare.getProcessedActions()
+        return merge(actionsFlow, middlewareActionsFlow)
             .onEach {
                 onEachAction?.invoke(it)
             }
-            .scan(lastState) { acc, value ->
+            .scan(initialState) { acc, value ->
                 reducer.reduce(acc, value)
-            }
-            .onEach {
-                lastState = it
             }
     }
 
 }
 
-interface Reducer<A : Action, V : ViewState> {
-    fun reduce(viewState: V, action: A): V
+interface Reducer<A : Action, S : ViewState> {
+    fun reduce(viewState: S, action: A): S
 }

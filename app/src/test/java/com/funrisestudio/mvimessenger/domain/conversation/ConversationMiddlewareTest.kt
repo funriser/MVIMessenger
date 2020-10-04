@@ -35,6 +35,9 @@ class ConversationMiddlewareTest {
     fun `should handle load conversation action`() = runBlockingTest {
         //Arrange
         val contactId = 1
+        val actionsInputFlow = flow<ConversationAction> {
+            emit(ConversationAction.LoadConversation(contactId))
+        }
         val mockedConversation = TestData.getMockedConversation()
         val conversationFlow = flow {
             emit(ConversationAction.ConversationReceived(mockedConversation))
@@ -42,13 +45,14 @@ class ConversationMiddlewareTest {
         whenever(getConversationUseCase.getFlow(contactId)).thenReturn(conversationFlow)
         //Act
         val output = mutableListOf<ConversationAction>()
-        conversationMiddleware.getProcessedActions()
+
+        conversationMiddleware.bind(actionsInputFlow)
             .take(2)
             .onEach {
                 output.add(it)
             }
             .launchIn(this)
-        conversationMiddleware.process(ConversationAction.LoadConversation(contactId))
+
         //Assert
         val expectedOutput = listOf(
             ConversationAction.Loading,
@@ -64,24 +68,26 @@ class ConversationMiddlewareTest {
     @Test
     fun `should handle send message action`() = runBlockingTest {
         //Arrange
-        val sendMsgAction = ConversationAction.SendMessage(1, "msg")
+        val sendMessageAction = ConversationAction.SendMessage(1, "msg")
+        val actionsInputFLow = flow<ConversationAction> {
+            emit(sendMessageAction)
+        }
         val sendMessageResponseFlow = flow {
             emit(ConversationAction.MessageSent)
         }
-        whenever(sendMessageUseCase.getFlow(sendMsgAction)).thenReturn(sendMessageResponseFlow)
+        whenever(sendMessageUseCase.getFlow(sendMessageAction)).thenReturn(sendMessageResponseFlow)
         //Act
         val output = mutableListOf<ConversationAction>()
-        conversationMiddleware.getProcessedActions()
+        conversationMiddleware.bind(actionsInputFLow)
             .take(2)
             .onEach {
                 output.add(it)
             }
             .launchIn(this)
-        conversationMiddleware.process(sendMsgAction)
         //Assert
-        val expectedOutput = listOf(sendMsgAction, ConversationAction.MessageSent)
+        val expectedOutput = listOf(ConversationAction.MessageSent)
         assertEquals(expectedOutput, output)
-        verify(sendMessageUseCase).getFlow(sendMsgAction)
+        verify(sendMessageUseCase).getFlow(sendMessageAction)
         verifyNoMoreInteractions(sendMessageUseCase)
         verifyZeroInteractions(getConversationUseCase)
         verifyZeroInteractions(markAsReadUseCase)
@@ -91,19 +97,21 @@ class ConversationMiddlewareTest {
     fun `should handle mark as read action`() = runBlockingTest {
         //Arrange
         val markAsReadAction = ConversationAction.MarkAsRead(1)
+        val actionsInputFlow = flow<ConversationAction> {
+            emit(markAsReadAction)
+        }
         val markAsReadResponseFlow = flow {
             emit(ConversationAction.MessagesMarkedAsRead)
         }
         whenever(markAsReadUseCase.getFlow(markAsReadAction)).thenReturn(markAsReadResponseFlow)
         //Act
         val output = mutableListOf<ConversationAction>()
-        conversationMiddleware.getProcessedActions()
+        conversationMiddleware.bind(actionsInputFlow)
             .take(1)
             .onEach {
                 output.add(it)
             }
             .launchIn(this)
-        conversationMiddleware.process(markAsReadAction)
         //Assert
         val expectedOutput = listOf(ConversationAction.MessagesMarkedAsRead)
         assertEquals(expectedOutput, output)
@@ -117,17 +125,13 @@ class ConversationMiddlewareTest {
     fun `should not react to unsupported actions`() = runBlockingTest {
         //Arrange
         val unsupportedAction = ConversationAction.MessageInputChanged(TextFieldValue())
+        val actionsInputFlow = flow<ConversationAction> {
+            emit(unsupportedAction)
+        }
         //Act
-        val output = mutableListOf<ConversationAction>()
-        conversationMiddleware.getProcessedActions()
-            .take(1)
-            .onEach {
-                output.add(it)
-            }
-            .launchIn(this)
-        conversationMiddleware.process(unsupportedAction)
+        val actual = conversationMiddleware.bind(actionsInputFlow).toList()
         //Assert
-        assertEquals(output, listOf(unsupportedAction))
+        assertEquals(emptyList<ConversationAction>(), actual)
         verifyZeroInteractions(getConversationUseCase)
         verifyZeroInteractions(sendMessageUseCase)
         verifyZeroInteractions(markAsReadUseCase)
