@@ -22,7 +22,7 @@ import kotlinx.coroutines.FlowPreview
 @FlowPreview
 @Module
 @InstallIn(ActivityRetainedComponent::class)
-interface IDialogsModule {
+interface DialogsModule {
 
     @Binds
     fun store(
@@ -46,16 +46,5 @@ interface IDialogsModule {
 
     @Binds
     fun navigator(dialogsNavigator: DialogsNavigator): Navigator<NavAction.DialogNavAction>
-
-}
-
-@Module
-@InstallIn(ActivityRetainedComponent::class)
-object DialogsModule {
-
-    @Provides
-    fun initialState(): DialogsViewState {
-        return DialogsViewState.createEmpty()
-    }
 
 }

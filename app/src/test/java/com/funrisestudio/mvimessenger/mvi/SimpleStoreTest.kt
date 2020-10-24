@@ -5,11 +5,9 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
 import junit.framework.Assert.assertEquals
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.ConflatedBroadcastChannel
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Test
 
@@ -28,10 +26,12 @@ class SimpleStoreTest {
     private val reducer: Reducer<TestAction, TestViewState> = mock()
 
     @Test
-    fun `should transform middleware actions to states`() = runBlockingTest {
+    fun `should transform middleware actions to states`() = runBlocking {
         //Arrange
         val middlewareFlow = flow {
+            delay(50)
             emit(TestAction.TestAction1)
+            delay(50)
             emit(TestAction.TestAction2)
         }
         whenever(middleWare.bind(any()))
@@ -41,15 +41,18 @@ class SimpleStoreTest {
         whenever(reducer.reduce(TestViewState("1"), TestAction.TestAction2))
             .thenReturn(TestViewState("2"))
         //Act
-        val store = SimpleStore(reducer, middleWare, TestViewState("0"))
-        val stateFlow = store.observeViewState()
+        val store = SimpleStore(reducer, middleWare)
+        //Global scope to not block current context with infinite waiting of subscriptions
+        //started inside launch methode
+        store.init(GlobalScope, TestViewState("0"))
+        val list = store.viewStateFlow
             .take(3)
             .toList()
         //Assert
         val expectedStates = listOf(
             TestViewState("0"), TestViewState("1"), TestViewState("2")
         )
-        assertEquals(stateFlow, expectedStates)
+        assertEquals(expectedStates, list)
     }
 
 }

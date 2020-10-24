@@ -10,7 +10,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.IconButton
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -51,7 +51,7 @@ class ConversationFragment : Fragment() {
             AppTheme {
                 ConversationScreen(
                     viewStateProvider = {
-                        conversationViewModel.viewState.observeAsState().value
+                        conversationViewModel.viewState.collectAsState().value
                     },
                     onNavigationClick = {
                         findNavController().popBackStack()

@@ -3,6 +3,7 @@ package com.funrisestudio.mvimessenger.domain.conversation
 import com.funrisestudio.mvimessenger.core.mvi.MiddleWare
 import com.funrisestudio.mvimessenger.ui.conversation.ConversationAction
 import com.funrisestudio.mvimessenger.ui.conversation.ConversationViewState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -26,6 +27,7 @@ class ConversationMiddleware @Inject constructor(
                     }
                     is ConversationAction.SendMessage -> {
                         sendMessageUseCase.getFlow(it)
+
                     }
                     is ConversationAction.MarkAsRead -> {
                         markAsReadUseCase.getFlow(it)
@@ -33,6 +35,7 @@ class ConversationMiddleware @Inject constructor(
                     else -> emptyFlow()
                 }
             }
+            .flowOn(Dispatchers.IO)
     }
 
 }

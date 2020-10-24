@@ -1,5 +1,8 @@
 package com.funrisestudio.mvimessenger.core.mvi
 
+import android.util.Log
+import com.funrisestudio.mvimessenger.core.withLatestFrom
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.BroadcastChannel
 import kotlinx.coroutines.channels.Channel
@@ -19,40 +22,55 @@ interface MiddleWare<A : Action, S : ViewState> {
 
 interface Store<A : Action, V : ViewState> {
 
-    var onEachAction: ((A) -> Unit)?
+    val viewStateFlow: StateFlow<V>
+
+    fun init(scope: CoroutineScope, initialState: V)
 
     fun process(action: A)
-
-    fun observeViewState(): Flow<V>
 
 }
 
 @ExperimentalCoroutinesApi
 class SimpleStore<A : Action, V : ViewState> @Inject constructor(
     private val reducer: Reducer<A, V>,
-    middleWare: MiddleWare<A, V>,
-    private val initialState: V
+    private val middleWare: MiddleWare<A, V>
 ) : Store<A, V> {
+
+    private lateinit var _viewStateFlow: MutableStateFlow<V>
+    override val viewStateFlow: StateFlow<V>
+        get() {
+            return if (::_viewStateFlow.isInitialized.not()) {
+                throw IllegalStateException(
+                    "Call init to set up store"
+                )
+            } else {
+                _viewStateFlow
+            }
+        }
 
     private val actionsBroadcast = BroadcastChannel<A>(Channel.BUFFERED)
     private val actionsFlow
         get() = actionsBroadcast.asFlow()
-    private val middlewareActionsFlow = middleWare.bind(actionsFlow)
-
-    override var onEachAction: ((A) -> Unit)? = null
 
     override fun process(action: A) {
         actionsBroadcast.offer(action)
     }
 
-    override fun observeViewState(): Flow<V> {
-        return merge(actionsFlow, middlewareActionsFlow)
+    override fun init(scope: CoroutineScope, initialState: V) {
+        _viewStateFlow = MutableStateFlow(initialState)
+        middleWare.bind(actionsFlow)
             .onEach {
-                onEachAction?.invoke(it)
+                actionsBroadcast.offer(it)
             }
-            .scan(initialState) { acc, value ->
-                reducer.reduce(acc, value)
+            .launchIn(scope)
+        actionsFlow
+            .withLatestFrom(_viewStateFlow) { action: A, state: V ->
+                reducer.reduce(state, action)
             }
+            .distinctUntilChanged()
+            .onEach { state ->
+                _viewStateFlow.value = state
+            }.launchIn(scope)
     }
 
 }

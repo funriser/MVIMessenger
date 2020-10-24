@@ -8,9 +8,7 @@ import com.funrisestudio.mvimessenger.core.SingleLiveEvent
 import com.funrisestudio.mvimessenger.core.mvi.Store
 import com.funrisestudio.mvimessenger.core.navigation.ToMessages
 import com.funrisestudio.mvimessenger.domain.entity.Contact
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 
 class ConversationViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle,
@@ -21,39 +19,30 @@ class ConversationViewModel @ViewModelInject constructor(
         savedStateHandle.get(ToMessages.KEY_CONTACT)
             ?: throw IllegalStateException("Sender is not defined")
 
-    private val _viewState = MutableLiveData<ConversationViewState>()
-    val viewState: LiveData<ConversationViewState> = _viewState
+    private val initialState = ConversationViewState.createFromContact(contact)
+
+    val viewState: StateFlow<ConversationViewState>
 
     private val _generateResponse = SingleLiveEvent<Int>()
     val generateResponse: LiveData<Int> = _generateResponse
 
     init {
-        store.observeViewState()
-            .distinctUntilChanged()
-            .onEach {
-                _viewState.value = it
-            }
-            .launchIn(viewModelScope)
-        store.process(ConversationAction.ContactReceived(contact))
+        store.init(viewModelScope, initialState)
+        viewState = store.viewStateFlow
         store.process(ConversationAction.LoadConversation(contact.id))
         initMessageReader()
     }
 
     //mark all received messages as read and send messages in response
     private fun initMessageReader() {
-        store.onEachAction = ::onNewAction
-    }
-
-    private fun onNewAction(action: ConversationAction) {
-        when(action) {
-            is ConversationAction.ConversationReceived -> {
+        store.viewStateFlow
+            .filter { vState ->
+                vState.messages.isNotEmpty()
+            }
+            .onEach {
                 store.process(ConversationAction.MarkAsRead(contact.id))
             }
-            is ConversationAction.MessageSent -> {
-                _generateResponse.value = contact.id
-            }
-            else -> {}
-        }
+            .launchIn(viewModelScope)
     }
 
     fun onMessageInputChanged(newInput: TextFieldValue) {
@@ -61,9 +50,9 @@ class ConversationViewModel @ViewModelInject constructor(
     }
 
     fun onSendMessage() {
-        val currState = _viewState.value?:return
-        val action = ConversationAction.SendMessage(contact.id, currState.messageInput.text)
+        val action = ConversationAction.SendMessage(contact.id, viewState.value.messageInput.text)
         store.process(action)
+        _generateResponse.value = contact.id
     }
 
 }

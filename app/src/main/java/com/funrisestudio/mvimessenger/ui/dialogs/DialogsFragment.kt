@@ -16,6 +16,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.stateFor
 import androidx.compose.ui.Alignment
@@ -52,9 +53,9 @@ class DialogsFragment : Fragment() {
             AppTheme {
                 DialogsScreen(
                     viewStateProvider = {
-                        dialogsViewModel.viewState.observeAsState().value
+                        dialogsViewModel.viewState.collectAsState().value
                     },
-                    onDialogItemSelected ={
+                    onDialogItemSelected = {
                         dialogsViewModel.onDialogItemSelected(it)
                     }
                 )

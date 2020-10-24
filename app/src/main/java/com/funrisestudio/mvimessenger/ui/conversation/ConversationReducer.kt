@@ -13,9 +13,6 @@ class ConversationReducer @Inject constructor(
         action: ConversationAction
     ): ConversationViewState {
         return when(action)  {
-            is ConversationAction.ContactReceived -> {
-                ConversationViewState.createContactReceived(action.contact)
-            }
             is ConversationAction.ConversationReceived -> {
                 viewState.copy(
                     messages = conversationViewDataMapper.getMessageViewDataList(action.messages)

@@ -24,24 +24,6 @@ class ConversationReducerTest {
     }
 
     @Test
-    fun `should reduce contact received action`() {
-        val mockedContact = TestData.getMockedContact()
-        val mockedViewState = ConversationViewState.createEmpty()
-        val testAction = ConversationAction.ContactReceived(mockedContact)
-
-        val actualResult = conversationReducer.reduce(mockedViewState, testAction)
-
-        val expected = ConversationViewState(
-            contact = mockedContact,
-            messages = listOf(),
-            messageInput = TextFieldValue(),
-            sendMessageEnabled = false
-        )
-
-        assertEquals(expected, actualResult)
-    }
-
-    @Test
     fun `should reduce conversation received action`() {
         val currViewState = ConversationViewState(
             contact = null,

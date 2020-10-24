@@ -7,7 +7,6 @@ import com.funrisestudio.mvimessenger.domain.entity.Contact
 import com.funrisestudio.mvimessenger.domain.entity.Message
 
 sealed class ConversationAction : Action {
-    data class ContactReceived(val contact: Contact): ConversationAction()
     data class ConversationReceived(val messages: List<Message>): ConversationAction()
     data class LoadConversation(val contactId: Int): ConversationAction()
     data class MessageInputChanged(val newInput: TextFieldValue): ConversationAction()
@@ -36,14 +35,12 @@ data class ConversationViewState(
             )
         }
 
-        fun createContactReceived(contact: Contact): ConversationViewState {
-            return ConversationViewState(
-                contact = contact,
-                messages = emptyList(),
-                messageInput = TextFieldValue(""),
-                sendMessageEnabled = false
-            )
-        }
+        fun createFromContact(contact: Contact) = ConversationViewState(
+            contact = contact,
+            messages = emptyList(),
+            messageInput = TextFieldValue(""),
+            sendMessageEnabled = false
+        )
 
         fun createConversationReceived(
             contact: Contact?,
