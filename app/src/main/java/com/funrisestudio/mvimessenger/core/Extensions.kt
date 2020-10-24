@@ -10,6 +10,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicReference
 
@@ -31,6 +32,8 @@ fun <A, B: Any, R> Flow<A>.withLatestFrom(other: Flow<B>, transform: suspend (A,
         }
     }
 }
+
+inline fun <reified T> Flow<Any>.ofType(): Flow<T> = mapNotNull { it as? T }
 
 fun <T : Any, L : LiveData<T>> Fragment.observe(liveData: L, body: (T?) -> Unit) {
     liveData.observe(viewLifecycleOwner, Observer(body))

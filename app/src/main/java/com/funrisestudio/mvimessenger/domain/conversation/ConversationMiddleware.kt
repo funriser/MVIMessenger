@@ -1,6 +1,7 @@
 package com.funrisestudio.mvimessenger.domain.conversation
 
 import com.funrisestudio.mvimessenger.core.mvi.MiddleWare
+import com.funrisestudio.mvimessenger.core.ofType
 import com.funrisestudio.mvimessenger.ui.conversation.ConversationAction
 import com.funrisestudio.mvimessenger.ui.conversation.ConversationViewState
 import kotlinx.coroutines.Dispatchers
@@ -18,23 +19,30 @@ class ConversationMiddleware @Inject constructor(
 ): MiddleWare<ConversationAction, ConversationViewState> {
 
     override fun bind(actions: Flow<ConversationAction>): Flow<ConversationAction> {
-        return actions
-            .flatMapMerge {
-                when(it) {
-                    is ConversationAction.LoadConversation -> {
-                        getConversationUseCase.getFlow(it.contactId)
-                            .onStart { emit(ConversationAction.Loading) }
-                    }
-                    is ConversationAction.SendMessage -> {
-                        sendMessageUseCase.getFlow(it)
-                    }
-                    is ConversationAction.MarkAsRead -> {
-                        markAsReadUseCase.getFlow(it)
-                    }
-                    else -> emptyFlow()
-                }
+        return merge(
+            conversationFlow(actions.ofType()),
+            sendMessageFlow(actions.ofType()),
+            markAsReadFlow(actions.ofType())
+        ).flowOn(Dispatchers.IO)
+    }
+
+    private fun conversationFlow(actions: Flow<ConversationAction.LoadConversation>): Flow<ConversationAction> {
+        return actions.flatMapMerge {
+                getConversationUseCase.getFlow(it.contactId)
+                    .onStart { emit(ConversationAction.Loading) }
             }
-            .flowOn(Dispatchers.IO)
+    }
+
+    private fun sendMessageFlow(actions: Flow<ConversationAction.SendMessage>): Flow<ConversationAction> {
+        return actions.flatMapMerge {
+                sendMessageUseCase.getFlow(it)
+            }
+    }
+
+    private fun markAsReadFlow(actions: Flow<ConversationAction.MarkAsRead>): Flow<ConversationAction> {
+        return actions.flatMapMerge {
+                markAsReadUseCase.getFlow(it)
+            }
     }
 
 }
