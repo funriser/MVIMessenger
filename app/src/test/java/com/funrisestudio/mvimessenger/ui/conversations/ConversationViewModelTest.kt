@@ -2,12 +2,9 @@ package com.funrisestudio.mvimessenger.ui.conversations
 
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
-import com.funrisestudio.mvimessenger.core.mvi.SimpleStore
 import com.funrisestudio.mvimessenger.core.mvi.Store
 import com.funrisestudio.mvimessenger.core.navigation.ToMessages
 import com.funrisestudio.mvimessenger.domain.TestData
-import com.funrisestudio.mvimessenger.domain.entity.Message
 import com.funrisestudio.mvimessenger.ui.ViewModelTest
 import com.funrisestudio.mvimessenger.ui.conversation.ConversationAction
 import com.funrisestudio.mvimessenger.ui.conversation.ConversationViewModel
@@ -16,9 +13,7 @@ import com.funrisestudio.mvimessenger.utils.awaitValue
 import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

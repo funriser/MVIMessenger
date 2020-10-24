@@ -27,7 +27,6 @@ class ConversationMiddleware @Inject constructor(
                     }
                     is ConversationAction.SendMessage -> {
                         sendMessageUseCase.getFlow(it)
-
                     }
                     is ConversationAction.MarkAsRead -> {
                         markAsReadUseCase.getFlow(it)
