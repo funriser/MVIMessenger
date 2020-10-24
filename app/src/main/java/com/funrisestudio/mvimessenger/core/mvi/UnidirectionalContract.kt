@@ -1,6 +1,5 @@
 package com.funrisestudio.mvimessenger.core.mvi
 
-import android.util.Log
 import com.funrisestudio.mvimessenger.core.withLatestFrom
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi

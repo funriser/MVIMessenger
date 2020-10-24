@@ -7,7 +7,7 @@ import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -22,7 +22,7 @@ class ConversationMiddlewareTest {
 
     private lateinit var conversationMiddleware: ConversationMiddleware
 
-    /*@Before
+    @Before
     fun setUp() {
         conversationMiddleware = ConversationMiddleware(
             getConversationUseCase,
@@ -32,7 +32,7 @@ class ConversationMiddlewareTest {
     }
 
     @Test
-    fun `should handle load conversation action`() = runBlockingTest {
+    fun `should handle load conversation action`() = runBlocking {
         //Arrange
         val contactId = 1
         val actionsInputFlow = flow<ConversationAction> {
@@ -51,7 +51,7 @@ class ConversationMiddlewareTest {
             .onEach {
                 output.add(it)
             }
-            .launchIn(this)
+            .toList()
 
         //Assert
         val expectedOutput = listOf(
@@ -66,7 +66,7 @@ class ConversationMiddlewareTest {
     }
 
     @Test
-    fun `should handle send message action`() = runBlockingTest {
+    fun `should handle send message action`() = runBlocking {
         //Arrange
         val sendMessageAction = ConversationAction.SendMessage(1, "msg")
         val actionsInputFLow = flow<ConversationAction> {
@@ -83,7 +83,7 @@ class ConversationMiddlewareTest {
             .onEach {
                 output.add(it)
             }
-            .launchIn(this)
+            .toList()
         //Assert
         val expectedOutput = listOf(ConversationAction.MessageSent)
         assertEquals(expectedOutput, output)
@@ -94,7 +94,7 @@ class ConversationMiddlewareTest {
     }
 
     @Test
-    fun `should handle mark as read action`() = runBlockingTest {
+    fun `should handle mark as read action`() = runBlocking {
         //Arrange
         val markAsReadAction = ConversationAction.MarkAsRead(1)
         val actionsInputFlow = flow<ConversationAction> {
@@ -111,7 +111,7 @@ class ConversationMiddlewareTest {
             .onEach {
                 output.add(it)
             }
-            .launchIn(this)
+            .toList()
         //Assert
         val expectedOutput = listOf(ConversationAction.MessagesMarkedAsRead)
         assertEquals(expectedOutput, output)
@@ -122,7 +122,7 @@ class ConversationMiddlewareTest {
     }
 
     @Test
-    fun `should not react to unsupported actions`() = runBlockingTest {
+    fun `should not react to unsupported actions`() = runBlocking {
         //Arrange
         val unsupportedAction = ConversationAction.MessageInputChanged(TextFieldValue())
         val actionsInputFlow = flow<ConversationAction> {
@@ -135,6 +135,6 @@ class ConversationMiddlewareTest {
         verifyZeroInteractions(getConversationUseCase)
         verifyZeroInteractions(sendMessageUseCase)
         verifyZeroInteractions(markAsReadUseCase)
-    }*/
+    }
 
 }

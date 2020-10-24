@@ -6,7 +6,7 @@ import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -19,13 +19,13 @@ class DialogsMiddlewareTest {
     private val getDialogsUseCase: GetDialogsUseCase = mock()
     private lateinit var dialogsMiddleware: DialogsMiddleware
 
-    /*@Before
+    @Before
     fun setUp() {
         dialogsMiddleware = DialogsMiddleware(getDialogsUseCase)
     }
 
     @Test
-    fun `should handle load dialogs action`() = runBlockingTest {
+    fun `should handle load dialogs action`() = runBlocking {
         //Arrange
         val actionsInputFlow = flow<DialogsAction> {
             emit(DialogsAction.LoadDialogs)
@@ -42,7 +42,7 @@ class DialogsMiddlewareTest {
             .onEach {
                 output.add(it)
             }
-            .launchIn(this)
+            .toList()
         //Assert
         assertTrue(output.contains(DialogsAction.DialogsLoaded(mockedDialogs)))
         verify(getDialogsUseCase).getFlow(Unit)
@@ -50,32 +50,7 @@ class DialogsMiddlewareTest {
     }
 
     @Test
-    fun `should emit dialogs loading action`() = runBlockingTest {
-        //Arrange
-        val actionsInputFlow = flow<DialogsAction> {
-            emit(DialogsAction.LoadDialogs)
-        }
-        val mockedDialogs = TestData.getMockedDialogs()
-        val dialogsFlow = flow {
-            emit(DialogsAction.DialogsLoaded(mockedDialogs))
-        }
-        whenever(getDialogsUseCase.getFlow(Unit)).thenReturn(dialogsFlow)
-        //Act
-        val output = mutableListOf<DialogsAction>()
-        dialogsMiddleware.bind(actionsInputFlow)
-            .take(2)
-            .onEach {
-                output.add(it)
-            }
-            .launchIn(this)
-        //Assert
-        assertTrue(output.contains(DialogsAction.Loading))
-        verify(getDialogsUseCase).getFlow(Unit)
-        verifyNoMoreInteractions(getDialogsUseCase)
-    }
-
-    @Test
-    fun `should emit unsupported actions`() = runBlockingTest {
+    fun `should emit unsupported actions`() = runBlocking {
         //Arrange
         val actionsInputFlow = flow<DialogsAction> {
             emit(DialogsAction.DialogsError(IllegalStateException()))
@@ -85,6 +60,6 @@ class DialogsMiddlewareTest {
         //Assert
         assertEquals(emptyList<DialogsAction>(), actual)
         verifyZeroInteractions(getDialogsUseCase)
-    }*/
+    }
 
 }
