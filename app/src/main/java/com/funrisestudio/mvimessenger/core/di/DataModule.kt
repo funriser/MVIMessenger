@@ -7,8 +7,6 @@ import com.funrisestudio.mvimessenger.data.messages.MessengerServiceController
 import com.funrisestudio.mvimessenger.data.messages.MessengerServiceControllerImpl
 import com.funrisestudio.mvimessenger.data.room.AppDatabase
 import com.funrisestudio.mvimessenger.data.room.MessagesDao
-import com.funrisestudio.mvimessenger.domain.messages.ReceiveMessageInteractor
-import com.funrisestudio.mvimessenger.domain.messages.ReceiveMessageUseCase
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -46,10 +44,5 @@ interface IDataModule {
     fun messengerController(
         messengerServiceControllerImpl: MessengerServiceControllerImpl
     ): MessengerServiceController
-
-    @Binds
-    fun receiveMessagesUseCase(
-        receiveMessageInteractor: ReceiveMessageInteractor
-    ): ReceiveMessageUseCase
 
 }
