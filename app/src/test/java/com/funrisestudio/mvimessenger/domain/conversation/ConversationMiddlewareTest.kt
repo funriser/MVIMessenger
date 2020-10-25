@@ -16,23 +16,16 @@ import org.junit.Test
 @FlowPreview
 class ConversationMiddlewareTest {
 
-    private val getConversationUseCase: GetConversationUseCase = mock()
-    private val sendMessageUseCase: SendMessageUseCase = mock()
-    private val markAsReadUseCase: MarkAsReadUseCase = mock()
-
+    private val conversationRepository: ConversationRepository = mock()
     private lateinit var conversationMiddleware: ConversationMiddleware
 
     @Before
     fun setUp() {
-        conversationMiddleware = ConversationMiddleware(
-            getConversationUseCase,
-            sendMessageUseCase,
-            markAsReadUseCase
-        )
+        conversationMiddleware = ConversationMiddleware(conversationRepository)
     }
 
     @Test
-    fun `should handle load conversation action`() = runBlocking {
+    fun `should handle load conversation action`() = runBlocking<Unit> {
         //Arrange
         val contactId = 1
         val actionsInputFlow = flow<ConversationAction> {
@@ -40,9 +33,9 @@ class ConversationMiddlewareTest {
         }
         val mockedConversation = TestData.getMockedConversation()
         val conversationFlow = flow {
-            emit(ConversationAction.ConversationReceived(mockedConversation))
+            emit(mockedConversation)
         }
-        whenever(getConversationUseCase.getFlow(contactId)).thenReturn(conversationFlow)
+        whenever(conversationRepository.getConversation(contactId)).thenReturn(conversationFlow)
         //Act
         val output = mutableListOf<ConversationAction>()
 
@@ -59,23 +52,18 @@ class ConversationMiddlewareTest {
             ConversationAction.ConversationReceived(mockedConversation)
         )
         assertEquals(expectedOutput, output)
-        verify(getConversationUseCase).getFlow(contactId)
-        verifyNoMoreInteractions(getConversationUseCase)
-        verifyZeroInteractions(sendMessageUseCase)
-        verifyZeroInteractions(markAsReadUseCase)
+        verify(conversationRepository).getConversation(contactId)
     }
 
     @Test
-    fun `should handle send message action`() = runBlocking {
+    fun `should handle send message action`() = runBlocking<Unit> {
         //Arrange
-        val sendMessageAction = ConversationAction.SendMessage(1, "msg")
+        val contactId = 1
+        val message = "msg"
+        val sendMessageAction = ConversationAction.SendMessage(contactId, message)
         val actionsInputFLow = flow<ConversationAction> {
             emit(sendMessageAction)
         }
-        val sendMessageResponseFlow = flow {
-            emit(ConversationAction.MessageSent)
-        }
-        whenever(sendMessageUseCase.getFlow(sendMessageAction)).thenReturn(sendMessageResponseFlow)
         //Act
         val output = mutableListOf<ConversationAction>()
         conversationMiddleware.bind(actionsInputFLow)
@@ -87,23 +75,17 @@ class ConversationMiddlewareTest {
         //Assert
         val expectedOutput = listOf(ConversationAction.MessageSent)
         assertEquals(expectedOutput, output)
-        verify(sendMessageUseCase).getFlow(sendMessageAction)
-        verifyNoMoreInteractions(sendMessageUseCase)
-        verifyZeroInteractions(getConversationUseCase)
-        verifyZeroInteractions(markAsReadUseCase)
+        verify(conversationRepository).sendMessage(contactId, message)
     }
 
     @Test
-    fun `should handle mark as read action`() = runBlocking {
+    fun `should handle mark as read action`() = runBlocking<Unit> {
         //Arrange
-        val markAsReadAction = ConversationAction.MarkAsRead(1)
+        val contactId = 1
+        val markAsReadAction = ConversationAction.MarkAsRead(contactId)
         val actionsInputFlow = flow<ConversationAction> {
             emit(markAsReadAction)
         }
-        val markAsReadResponseFlow = flow {
-            emit(ConversationAction.MessagesMarkedAsRead)
-        }
-        whenever(markAsReadUseCase.getFlow(markAsReadAction)).thenReturn(markAsReadResponseFlow)
         //Act
         val output = mutableListOf<ConversationAction>()
         conversationMiddleware.bind(actionsInputFlow)
@@ -115,10 +97,7 @@ class ConversationMiddlewareTest {
         //Assert
         val expectedOutput = listOf(ConversationAction.MessagesMarkedAsRead)
         assertEquals(expectedOutput, output)
-        verify(markAsReadUseCase).getFlow(markAsReadAction)
-        verifyNoMoreInteractions(markAsReadUseCase)
-        verifyZeroInteractions(getConversationUseCase)
-        verifyZeroInteractions(sendMessageUseCase)
+        verify(conversationRepository).markMessagesAsRead(contactId)
     }
 
     @Test
@@ -132,9 +111,6 @@ class ConversationMiddlewareTest {
         val actual = conversationMiddleware.bind(actionsInputFlow).toList()
         //Assert
         assertEquals(emptyList<ConversationAction>(), actual)
-        verifyZeroInteractions(getConversationUseCase)
-        verifyZeroInteractions(sendMessageUseCase)
-        verifyZeroInteractions(markAsReadUseCase)
     }
 
 }

@@ -13,10 +13,8 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @FlowPreview
 class ConversationMiddleware @Inject constructor(
-    private val getConversationUseCase: GetConversationUseCase,
-    private val sendMessageUseCase: SendMessageUseCase,
-    private val markAsReadUseCase: MarkAsReadUseCase
-): MiddleWare<ConversationAction, ConversationViewState> {
+    private val conversationRepository: ConversationRepository
+) : MiddleWare<ConversationAction, ConversationViewState> {
 
     override fun bind(actions: Flow<ConversationAction>): Flow<ConversationAction> {
         return merge(
@@ -26,23 +24,37 @@ class ConversationMiddleware @Inject constructor(
         ).flowOn(Dispatchers.IO)
     }
 
-    private fun conversationFlow(actions: Flow<ConversationAction.LoadConversation>): Flow<ConversationAction> {
-        return actions.flatMapMerge {
-                getConversationUseCase.getFlow(it.contactId)
-                    .onStart { emit(ConversationAction.Loading) }
-            }
-    }
+    private fun conversationFlow(
+        actions: Flow<ConversationAction.LoadConversation>
+    ) = actions
+        .flatMapLatest {
+            conversationRepository.getConversation(it.contactId)
+                .map { messages ->
+                    ConversationAction.ConversationReceived(messages)
+                }
+                .ofType<ConversationAction>()
+                .onStart {
+                    emit(ConversationAction.Loading)
+                }
+        }
 
-    private fun sendMessageFlow(actions: Flow<ConversationAction.SendMessage>): Flow<ConversationAction> {
-        return actions.flatMapMerge {
-                sendMessageUseCase.getFlow(it)
-            }
-    }
 
-    private fun markAsReadFlow(actions: Flow<ConversationAction.MarkAsRead>): Flow<ConversationAction> {
-        return actions.flatMapMerge {
-                markAsReadUseCase.getFlow(it)
-            }
-    }
+    private fun sendMessageFlow(
+        actions: Flow<ConversationAction.SendMessage>
+    ) = actions
+        .onEach { sendMsgAction ->
+            conversationRepository.sendMessage(sendMsgAction.contactId, sendMsgAction.message)
+        }.map {
+            ConversationAction.MessageSent
+        }
+
+    private fun markAsReadFlow(
+        actions: Flow<ConversationAction.MarkAsRead>
+    ) = actions
+        .onEach { markAsReadAction ->
+            conversationRepository.markMessagesAsRead(markAsReadAction.contactId)
+        }.map {
+            ConversationAction.MessagesMarkedAsRead
+        }
 
 }

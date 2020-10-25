@@ -16,25 +16,25 @@ import org.junit.Test
 @FlowPreview
 class DialogsMiddlewareTest {
 
-    private val getDialogsUseCase: GetDialogsUseCase = mock()
+    private val dialogsRepository: DialogsRepository = mock()
     private lateinit var dialogsMiddleware: DialogsMiddleware
 
     @Before
     fun setUp() {
-        dialogsMiddleware = DialogsMiddleware(getDialogsUseCase)
+        dialogsMiddleware = DialogsMiddleware(dialogsRepository)
     }
 
     @Test
-    fun `should handle load dialogs action`() = runBlocking {
+    fun `should handle load dialogs action`() = runBlocking<Unit> {
         //Arrange
         val actionsInputFlow = flow<DialogsAction> {
             emit(DialogsAction.LoadDialogs)
         }
         val mockedDialogs = TestData.getMockedDialogs()
         val dialogsFlow = flow {
-            emit(DialogsAction.DialogsLoaded(mockedDialogs))
+            emit(mockedDialogs)
         }
-        whenever(getDialogsUseCase.getFlow(Unit)).thenReturn(dialogsFlow)
+        whenever(dialogsRepository.getDialogs()).thenReturn(dialogsFlow)
         //Act
         val output = mutableListOf<DialogsAction>()
         dialogsMiddleware.bind(actionsInputFlow)
@@ -45,12 +45,11 @@ class DialogsMiddlewareTest {
             .toList()
         //Assert
         assertTrue(output.contains(DialogsAction.DialogsLoaded(mockedDialogs)))
-        verify(getDialogsUseCase).getFlow(Unit)
-        verifyNoMoreInteractions(getDialogsUseCase)
+        verify(dialogsRepository).getDialogs()
     }
 
     @Test
-    fun `should emit unsupported actions`() = runBlocking {
+    fun `should not emit unsupported actions`() = runBlocking {
         //Arrange
         val actionsInputFlow = flow<DialogsAction> {
             emit(DialogsAction.DialogsError(IllegalStateException()))
@@ -59,7 +58,6 @@ class DialogsMiddlewareTest {
         val actual = dialogsMiddleware.bind(actionsInputFlow).toList()
         //Assert
         assertEquals(emptyList<DialogsAction>(), actual)
-        verifyZeroInteractions(getDialogsUseCase)
     }
 
 }

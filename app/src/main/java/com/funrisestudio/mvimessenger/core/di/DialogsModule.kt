@@ -6,13 +6,10 @@ import com.funrisestudio.mvimessenger.core.navigation.Navigator
 import com.funrisestudio.mvimessenger.domain.dialogs.DialogsRepository
 import com.funrisestudio.mvimessenger.data.dialogs.DialogsRepositoryImpl
 import com.funrisestudio.mvimessenger.domain.dialogs.DialogsMiddleware
-import com.funrisestudio.mvimessenger.domain.dialogs.GetDialogsInteractor
-import com.funrisestudio.mvimessenger.domain.dialogs.GetDialogsUseCase
 import com.funrisestudio.mvimessenger.ui.dialogs.*
 import com.funrisestudio.mvimessenger.ui.utils.ErrorHandler
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ActivityRetainedComponent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,9 +25,6 @@ interface DialogsModule {
     fun store(
         simpleStore: SimpleStore<DialogsAction, DialogsViewState>
     ): Store<DialogsAction, DialogsViewState>
-
-    @Binds
-    fun getDialogsUseCase(getDialogsInteractor: GetDialogsInteractor): GetDialogsUseCase
 
     @Binds
     fun repository(dialogsRepositoryImpl: DialogsRepositoryImpl): DialogsRepository

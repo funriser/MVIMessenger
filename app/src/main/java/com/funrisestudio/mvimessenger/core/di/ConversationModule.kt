@@ -27,21 +27,6 @@ interface ConversationModule {
     ): Store<ConversationAction, ConversationViewState>
 
     @Binds
-    fun getConversationUseCase(
-        getConversationInteractor: GetConversationInteractor
-    ): GetConversationUseCase
-
-    @Binds
-    fun sendMessageUseCase(
-        sendMessageInteractor: SendMessageInteractor
-    ): SendMessageUseCase
-
-    @Binds
-    fun markAsReadUseCase(
-        markAsReadInteractor: MarkAsReadInteractor
-    ): MarkAsReadUseCase
-
-    @Binds
     fun repository(
         conversationRepositoryImpl: ConversationRepositoryImpl
     ): ConversationRepository
